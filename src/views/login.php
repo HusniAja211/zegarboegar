@@ -8,7 +8,8 @@
   <!-- Tailwind -->
   <link href="/css/app.css" rel="stylesheet">
 </head>
-<body class="bg-gradient-to-br from-blue-100 via-white to-blue-50 text-blue-900 min-h-screen flex items-center justify-center">
+<body style="background-image: url('/images/outer_background/outer_background.jpg'); background-size: cover; background-position: center;" 
+      class="text-blue-900 min-h-screen flex items-center justify-center">
 
   <!-- Wrapper Utama -->
   <div class="w-[90%] md:w-[75%] max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
@@ -42,6 +43,13 @@
           <!-- Password -->
           <input type="password" name="password" placeholder="Password"
             class="w-full px-3 py-2 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+            <!-- Link Lupa Password -->
+            <div class="text-right">
+                <a href="/forgetPassword" class="text-xs text-blue-500 hover:underline font-medium">
+                    Lupa Password?
+                </a>
+            </div>
 
           <button type="submit"
             class="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium shadow-md transition text-sm">

@@ -30,6 +30,10 @@ switch (true) {
         require __DIR__ . '/../src/views/login.php';
         break;
 
+    case ($path === '/forgetPassword'):
+        require __DIR__ . '/../src/views/forgetPassword.php';
+        break;
+
     // 🔹 Route dinamis: /post/{id}
     case (preg_match('#^/post/([0-9]+)$#', $path, $matches)):
         $postId = $matches[1]; // ambil ID dari URL

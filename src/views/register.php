@@ -8,7 +8,8 @@
   <!-- Tailwind -->
   <link href="/css/app.css" rel="stylesheet">
 </head>
-<body class="bg-gradient-to-br from-blue-100 via-white to-blue-50 text-blue-900 min-h-screen flex items-center justify-center">
+<body style="background-image: url('/images/outer_background/outer_background.jpg'); background-size: cover; background-position: center;"
+      class="text-blue-900 min-h-screen flex items-center justify-center">
 
   <!-- Wrapper Utama -->
   <div class="w-[90%] md:w-[75%] max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
