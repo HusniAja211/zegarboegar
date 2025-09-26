@@ -7,6 +7,9 @@
 
   <!-- Tailwind -->
   <link href="/css/app.css" rel="stylesheet">
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body style="background-image: url('/images/outer_background/outer_background.jpg'); background-size: cover; background-position: center;"
       class="text-blue-900 min-h-screen flex items-center justify-center">
@@ -25,24 +28,24 @@
           </p>
         </div>
 
-        <form action="#" method="POST" class="space-y-3 text-sm">
-          <input type="text" name="nama" placeholder="Nama Lengkap"
+        <form action="/register" method="POST" class="space-y-3 text-sm">
+          <input type="text" name="nama_kasir" placeholder="Nama Lengkap" required
             class="w-full px-3 py-2 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
 
-          <input type="email" name="email" placeholder="Email"
+          <input type="email" name="email_kasir" placeholder="Email" required
             class="w-full px-3 py-2 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
 
-          <input type="tel" name="whatsapp" placeholder="Nomor WhatsApp"
+          <input type="tel" name="nomor_telepon_kasir" placeholder="Nomor WhatsApp" required
             class="w-full px-3 py-2 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
 
-          <input type="password" name="password" placeholder="Password"
+          <input type="password" name="password_kasir" placeholder="Password" minlength="8" maxlength="8" required
             class="w-full px-3 py-2 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
 
-          <input type="password" name="confirm_password" placeholder="Konfirmasi Password"
+          <input type="password" name="confirm_password" placeholder="Konfirmasi Password" minlength="8" maxlength="8" required
             class="w-full px-3 py-2 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
 
           <label class="flex items-center text-xs text-blue-700">
-            <input type="checkbox" class="mr-2 accent-blue-500">
+            <input type="checkbox" name="terms" class="mr-2 accent-blue-500" required>
             Saya setuju dengan <a href="#" class="ml-1 text-blue-500 hover:underline">Syarat & Ketentuan</a>
           </label>
 
@@ -78,6 +81,21 @@
       </p>
     </div>
   </div>
+
+  <!-- SweetAlert Error -->
+  <?php if (isset($_GET['error'])): ?>
+    <script>
+      <?php if ($_GET['error'] === 'email'): ?>
+        Swal.fire({icon: 'error', title: 'Email sudah terdaftar', text: 'Gunakan email lain.'});
+      <?php elseif ($_GET['error'] === 'password_mismatch'): ?>
+        Swal.fire({icon: 'error', title: 'Password tidak sama', text: 'Konfirmasi password harus cocok.'});
+      <?php elseif ($_GET['error'] === 'terms'): ?>
+        Swal.fire({icon: 'warning', title: 'Syarat & Ketentuan', text: 'Anda harus setuju dulu.'});
+      <?php else: ?>
+        Swal.fire({icon: 'error', title: 'Registrasi gagal', text: 'Terjadi kesalahan. Coba lagi.'});
+      <?php endif; ?>
+    </script>
+  <?php endif; ?>
 
 </body>
 </html>

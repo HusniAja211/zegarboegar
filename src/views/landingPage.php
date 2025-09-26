@@ -1,3 +1,14 @@
+<?php
+
+// Kalau sudah login, lempar ke dashboard
+require_once __DIR__ . '/../helpers/SessionManager.php';
+
+if (SessionManager::isLoggedIn()) {
+    header("Location: /dashboard");
+    exit;
+}
+
+?>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -84,11 +95,11 @@
         <div class="max-w-4xl mx-auto px-6 text-center">
             <h2 class="text-3xl font-bold mb-8" data-aos="fade-up">Apa Kata Pengguna</h2>
             <div class="space-y-8">
-                <blockquote data-aos="fade-up" class="p-6 bg-blue-50 rounded-xl shadow">
+                <blockquote data-aos="fade-right" class="p-6 bg-blue-50 rounded-xl shadow">
                     <p class="italic mb-2">“Semenjak pakai Kasir Digital, laporan penjualan lebih rapi dan stok selalu terkontrol.”</p>
                     <span class="font-semibold">— Husni, Pemilik Toko Risol</span>
                 </blockquote>
-                <blockquote data-aos="fade-up" data-aos-delay="150" class="p-6 bg-blue-50 rounded-xl shadow">
+                <blockquote data-aos="fade-left" data-aos-delay="150" class="p-6 bg-blue-50 rounded-xl shadow">
                     <p class="italic mb-2">“Sangat membantu untuk bisnis kecil saya. Simple tapi powerful!”</p>
                     <span class="font-semibold">— Sri, Warung Kopi</span>
                 </blockquote>
