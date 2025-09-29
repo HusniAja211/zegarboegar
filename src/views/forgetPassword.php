@@ -1,10 +1,3 @@
-<?php
-// forgetPassword.php
-$step = $_GET['step'] ?? 1;
-$email = $_GET['email'] ?? '';
-$error = $_GET['error'] ?? '';
-$success = $_GET['success'] ?? '';
-?>
 <!DOCTYPE html>
 <html lang="id">
 <head>

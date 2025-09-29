@@ -35,7 +35,9 @@ switch (true) {
         break;
 
     case ($path === '/forgetPassword'):
-        require __DIR__ . '/../src/views/forgetPassword.php';
+        require __DIR__ . '/../src/controllers/kasirController.php';
+        $controller = new KasirController();
+        $controller->forgetPassword();
         break;
 
     case '/logout':

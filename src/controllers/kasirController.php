@@ -97,4 +97,65 @@ class KasirController
         exit;
     }
 
+    public function forgetPassword()
+    {
+        $kasir = new Kasir();
+
+        $error = null;
+        $success = null;
+        $step = 1;
+        $email = null;
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // STEP 1: User input email → kirim OTP
+            if (isset($_POST['email']) && !isset($_POST['otp'])) {
+                $email = trim($_POST['email']);
+                $user = $kasir->findByEmail($email);
+
+                if (!$user) {
+                    $error = "Email tidak terdaftar.";
+                } else {
+                    // Generate OTP random 8 karakter
+                    $otp = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'), 0, 8);
+
+                    if ($kasir->updateOtp($email, $otp)) {
+                        if (Mailer::sendOtp($email, $otp)) {
+                            $success = "Kode OTP telah dikirim ke email Anda.";
+                            $step = 2;
+                        } else {
+                            $error = "Gagal mengirim email OTP.";
+                        }
+                    } else {
+                        $error = "Gagal menyimpan OTP.";
+                    }
+                }
+            }
+
+            // STEP 2: User input OTP + password baru
+            if (isset($_POST['otp']) && isset($_POST['new_password'])) {
+                $email = trim($_POST['email']);
+                $otp   = trim($_POST['otp']);
+                $newPw = trim($_POST['new_password']);
+
+                $user = $kasir->verifyOtp($email, $otp);
+
+                if (!$user) {
+                    $error = "OTP salah atau tidak valid.";
+                    $step = 2; // tetap di step 2
+                } else {
+                    if ($kasir->updatePassword($email, $newPw)) {
+                        $success = "Password berhasil diubah. Silakan login.";
+                        $step = 1; // kembali ke step 1
+                    } else {
+                        $error = "Gagal mengubah password.";
+                        $step = 2;
+                    }
+                }
+            }
+        }
+
+        // kirim variabel ke view
+        require __DIR__ . '/../views/forgetPassword.php';
+    }
+
 }
