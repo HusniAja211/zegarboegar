@@ -60,7 +60,6 @@ class KasirController
     //Login
     public function login()
     {
-
         // Kalau sudah login, lempar ke dashboard
         require_once __DIR__ . '/../helpers/SessionManager.php';
 
@@ -156,6 +155,22 @@ class KasirController
 
         // kirim variabel ke view
         require __DIR__ . '/../views/forgetPassword.php';
+    }
+
+    public function listKasir()
+    {
+        $kasir = new Kasir();
+        $allKasir = $kasir->getAllKasir();
+
+        // pagination
+        $perPage = 10;
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $totalData = count($allKasir);
+        $totalPages = ceil($totalData / $perPage);
+        $start = ($page - 1) * $perPage;
+        $dataPage = array_slice($allKasir, $start, $perPage);
+
+        require __DIR__ . '/../views/kasir.php';
     }
 
 }

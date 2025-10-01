@@ -91,5 +91,11 @@ class Kasir
         ]);
     }
 
+    public function getAllKasir()
+    {
+        $stmt = $this->db->query("SELECT id_kasir, nama_kasir, email_kasir, nomor_telepon_kasir, status FROM {$this->table}");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
    
 }

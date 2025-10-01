@@ -13,7 +13,7 @@ require_once __DIR__ . '/components/header.php';
 </section>
 
 <!-- Konten Dashboard -->
-<main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
   <!-- Card Statistik -->
   <div class="bg-white rounded-xl shadow p-4">
     <h3 class="text-sm text-gray-500">Total Profit</h3>
@@ -76,5 +76,5 @@ require_once __DIR__ . '/components/header.php';
       </tbody>
     </table>
   </div>
-
+</div>
   <?php require_once __DIR__ . '/components/footer.php'; ?>
