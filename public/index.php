@@ -27,7 +27,7 @@ switch (true) {
         $controller = new KasirController();
         $controller->register();
         break;
-        
+
     case ($path === '/login'):
         require __DIR__ . '/../src/controllers/kasirController.php';
         $controller = new KasirController();
@@ -41,10 +41,17 @@ switch (true) {
         break;
 
     case '/logout':
-        require __DIR__ . '/../src/controllers/kasirController.php';
-        $controller = new KasirController();
-        $controller->logout();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            require __DIR__ . '/../src/controllers/kasirController.php';
+            $controller = new KasirController();
+            $controller->logout();
+        } else {
+            // Kalau ada yang akses via GET, jangan hancurkan session
+            header("Location: /dashboard");
+            exit;
+        }
         break;
+
 
 
     // 🔹 Route dinamis: /post/{id}
@@ -103,4 +110,3 @@ switch (true) {
 //         require __DIR__ . '/../src/views/404.php';
 //         break;
 // }
-

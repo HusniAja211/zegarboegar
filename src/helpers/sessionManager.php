@@ -38,7 +38,8 @@ class SessionManager
     public static function logout()
     {
         self::start();
-        session_destroy();
         $_SESSION = [];
+        session_destroy();
+        
     }
 }
