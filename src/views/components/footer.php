@@ -1,5 +1,3 @@
-<?php
-?>
   </main>
    <footer class="bg-blue-950 text-blue-200 py-8">
         <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
@@ -12,6 +10,11 @@
         </div>
     </footer>
 
+    
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/deleteAlert.js"></script>
+<script src="/js/editAlert.js"></script>
 <script src="/js/dropdown.js"></script>
+
 </body>
 </html>

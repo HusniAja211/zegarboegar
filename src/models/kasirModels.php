@@ -97,5 +97,81 @@ class Kasir
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-   
+    public function getKasirById($id)
+    {
+        $stmt = $this->db->prepare("SELECT id_kasir, nama_kasir, email_kasir, nomor_telepon_kasir, status, gambar_kasir FROM {$this->table} WHERE id_kasir = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function deleteKasirById($id)
+    {
+        $stmt = $this->db->prepare("DELETE FROM {$this->table} WHERE id_kasir = ?");
+        return $stmt->execute([$id]);
+    }
+
+    public function updateKasirById($id, $nama, $email, $telepon, $status, $gambar, $password = null)
+    {
+        if ($password) {
+            $stmt = $this->db->prepare("
+            UPDATE {$this->table}
+            SET nama_kasir = :nama,
+                email_kasir = :email,
+                nomor_telepon_kasir = :telepon,
+                status = :status,
+                gambar_kasir = :gambar,
+                password_kasir = :password,
+                tanggal_diubah = NOW()
+            WHERE id_kasir = :id
+        ");
+            return $stmt->execute([
+                ':nama' => $nama,
+                ':email' => $email,
+                ':telepon' => $telepon,
+                ':status' => $status,
+                ':gambar' => $gambar,
+                ':password' => $password,
+                ':id' => $id
+            ]);
+        } else {
+            $stmt = $this->db->prepare("
+            UPDATE {$this->table}
+            SET nama_kasir = :nama,
+                email_kasir = :email,
+                nomor_telepon_kasir = :telepon,
+                status = :status,
+                gambar_kasir = :gambar,
+                tanggal_diubah = NOW()
+            WHERE id_kasir = :id
+        ");
+            return $stmt->execute([
+                ':nama' => $nama,
+                ':email' => $email,
+                ':telepon' => $telepon,
+                ':status' => $status,
+                ':gambar' => $gambar,
+                ':id' => $id
+            ]);
+        }
+    }
+
+    public function updatePartial($id, $data)
+    {
+        if (empty($data)) return false;
+
+        $fields = [];
+        $params = [':id' => $id];
+
+        foreach ($data as $key => $value) {
+            $fields[] = "$key = :$key";
+            $params[":$key"] = $value;
+        }
+
+        // Tambahkan waktu update
+        $fields[] = "tanggal_diubah = NOW()";
+
+        $sql = "UPDATE {$this->table} SET " . implode(', ', $fields) . " WHERE id_kasir = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute($params);
+    }
 }

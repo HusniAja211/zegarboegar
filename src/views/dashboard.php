@@ -2,6 +2,7 @@
 require_once __DIR__ . '/components/header.php';
 ?>
 
+<main class="flex-1 max-w-7xl w-full mx-auto bg-gray-50 text-gray-800 ">
 <!-- Hero Section (Notifikasi / Pengumuman) -->
 <section class="bg-blue-100">
   <div class="max-w-7xl mx-auto px-4 py-4 text-center">
@@ -77,4 +78,5 @@ require_once __DIR__ . '/components/header.php';
     </table>
   </div>
 </div>
+</main>
   <?php require_once __DIR__ . '/components/footer.php'; ?>

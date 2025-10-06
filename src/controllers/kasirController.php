@@ -173,4 +173,153 @@ class KasirController
         require __DIR__ . '/../views/kasir.php';
     }
 
+    public function detailKasir($id)
+    {
+        SessionManager::start();
+        if (!SessionManager::isLoggedIn()) {
+            header("Location: /login?error=unauthorized");
+            exit;
+        }
+
+        $kasirModel = new Kasir();
+        $detailKasir = $kasirModel->getKasirById($id);
+
+        if (!$detailKasir) {
+            // kalau ID tidak ada, redirect atau tampilkan 404
+            header("Location: /kasir?error=notfound");
+            exit;
+        }
+
+        require __DIR__ . '/../views/detailKasir.php';
+    }
+
+    public function deleteKasir($id)
+    {
+        SessionManager::start();
+
+        if (!SessionManager::isLoggedIn()) {
+            header("Location: /login?error=unauthorized");
+            exit;
+        }
+
+        $kasirModel = new Kasir();
+        $kasir = $kasirModel->getKasirById($id);
+
+        if (!$kasir) {
+            header("Location: /kasir?error=notfound");
+            exit;
+        }
+
+        // 🔹 Cek status
+        if (isset($kasir['status']) && $kasir['status'] === 'Aktif') {
+            // Tidak boleh hapus kasir aktif
+            header("Location: /kasir?error=active");
+            exit;
+        }
+
+        // 🔹 Hapus hanya jika "Tidak Aktif"
+        if ($kasirModel->deleteKasirById($id)) {
+            header("Location: /kasir?success=deleted");
+            exit;
+        } else {
+            header("Location: /kasir?error=failed");
+            exit;
+        }
+    }
+
+    public function updateKasir($id)
+    {
+        SessionManager::start();
+        if (!SessionManager::isLoggedIn()) {
+            header("Location: /login?error=unauthorized");
+            exit;
+        }
+
+        $kasirModel = new Kasir();
+        $kasir = $kasirModel->getKasirById($id);
+
+        if (!$kasir) {
+            header("Location: /kasir?error=notfound");
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $updateData = [];
+
+            // Hanya update jika ada input
+            if (!empty($_POST['nama_kasir'])) {
+                $updateData['nama_kasir'] = trim($_POST['nama_kasir']);
+            }
+            if (!empty($_POST['email_kasir'])) {
+                $updateData['email_kasir'] = trim($_POST['email_kasir']);
+            }
+            if (!empty($_POST['nomor_telepon_kasir'])) {
+                $updateData['nomor_telepon_kasir'] = trim($_POST['nomor_telepon_kasir']);
+            }
+            if (!empty($_POST['status'])) {
+                $updateData['status'] = trim($_POST['status']);
+            }
+
+            // 🔐 Password baru (opsional)
+            $passwordBaru = trim($_POST['password_baru'] ?? '');
+            $konfirmasiPassword = trim($_POST['konfirmasi_password'] ?? '');
+            if (!empty($passwordBaru)) {
+                if ($passwordBaru !== $konfirmasiPassword) {
+                    header("Location: /kasir/detail/$id?error=password_mismatch");
+                    exit;
+                }
+                $updateData['password_kasir'] = password_hash($passwordBaru, PASSWORD_BCRYPT);
+            }
+
+            // 🖼️ Upload foto baru (opsional)
+            if (isset($_FILES['gambar_kasir']) && $_FILES['gambar_kasir']['error'] === UPLOAD_ERR_OK) {
+                $fileTmp = $_FILES['gambar_kasir']['tmp_name'];
+                $fileType = $_FILES['gambar_kasir']['type'];
+
+                // Tentukan ekstensi file
+                $ext = pathinfo($_FILES['gambar_kasir']['name'], PATHINFO_EXTENSION);
+                $ext = strtolower($ext);
+
+                // Validasi tipe file
+                $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+                if (!in_array($ext, $allowed)) {
+                    header("Location: /kasir/detail/$id?error=invalid_filetype");
+                    exit;
+                }
+
+                // Folder tujuan
+                $targetDir = __DIR__ . '/../../public/images/pfp/';
+                if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+
+                // 🔹 Buat nama file unik: id_namakasir.ekstensi
+                $namaKasirBersih = preg_replace('/[^a-zA-Z0-9_-]/', '', str_replace(' ', '_', $kasir['nama_kasir']));
+                $fileName = "{$id}_{$namaKasirBersih}.{$ext}";
+                $targetPath = $targetDir . $fileName;
+
+                // Hapus file lama (jika bukan default)
+                if (!empty($kasir['gambar_kasir']) && strpos($kasir['gambar_kasir'], 'default_pfp') === false) {
+                    $oldFile = __DIR__ . '/../../public' . $kasir['gambar_kasir'];
+                    if (file_exists($oldFile)) unlink($oldFile);
+                }
+
+                // Simpan file baru
+                if (move_uploaded_file($fileTmp, $targetPath)) {
+                    // Simpan hanya relative path agar lebih fleksibel
+                    $updateData['gambar_kasir'] = '/images/pfp/' . $fileName;
+                } else {
+                    header("Location: /kasir/detail/$id?error=upload_failed");
+                    exit;
+                }
+            }
+            // ✅ Jalankan update hanya jika ada data diubah
+            if (!empty($updateData)) {
+                $kasirModel->updatePartial($id, $updateData);
+                header("Location: /kasir/detail/$id?success=updated");
+                exit;
+            } else {
+                header("Location: /kasir/detail/$id?info=no_changes");
+                exit;
+            }
+        }
+    }
 }

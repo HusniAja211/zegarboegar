@@ -4,6 +4,24 @@ class SessionManager
     public static function start()
     {
         if (session_status() === PHP_SESSION_NONE) {
+
+            // Pastikan session disimpan di folder project (bukan temp OS)
+            $path = __DIR__ . '/../../storage/session';
+            if (!is_dir($path)) {
+                mkdir($path, 0777, true);
+            }
+            ini_set('session.save_path', $path);
+
+            // Atur cookie agar tetap terbaca di POST request
+            session_set_cookie_params([
+                'lifetime' => 0,
+                'path' => '/',
+                'domain' => '', // biarkan kosong untuk domain saat ini
+                'secure' => false, // true kalau pakai HTTPS
+                'httponly' => true,
+                'samesite' => 'Lax'
+            ]);
+
             session_start();
         }
     }
@@ -17,6 +35,8 @@ class SessionManager
             'nama'    => $kasir['nama_kasir'],
             'email'   => $kasir['email_kasir'],
             'telepon' => $kasir['nomor_telepon_kasir'],
+            'pfp' => $kasir['gambar_kasir'] ?? null,
+            'status'  => $kasir['status']
         ];
     }
 
@@ -40,6 +60,5 @@ class SessionManager
         self::start();
         $_SESSION = [];
         session_destroy();
-        
     }
 }
