@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/components/header.php';
+$kasirModel = new Kasir();
+$kasirModel->updateLastActivity($_SESSION['kasir']['id']);
 ?>
 
 <main class="flex-1 max-w-7xl w-full mx-auto bg-gray-50 text-gray-800 ">

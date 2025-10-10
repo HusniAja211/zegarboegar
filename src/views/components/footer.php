@@ -16,5 +16,10 @@
 <script src="/js/editAlert.js"></script>
 <script src="/js/dropdown.js"></script>
 
+<!-- File JS Terpisah -->
+<script src="/js/produk.js" defer></script>
+<!-- AlpineJS -->
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script src="/js/confirmDelete.js"></script>
 </body>
 </html>

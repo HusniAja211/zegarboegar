@@ -174,4 +174,22 @@ class Kasir
         $stmt = $this->db->prepare($sql);
         return $stmt->execute($params);
     }
+
+    public function updateLastActivity($id)
+    {
+        $stmt = $this->db->prepare("UPDATE t_kasir SET terakhir_login = NOW() WHERE id_kasir = ?");
+        $stmt->execute([$id]);
+    }
+
+    public function deactivateInactiveKasir($days = 7)
+    {
+        $stmt = $this->db->prepare("
+        UPDATE t_kasir 
+        SET status = 'Tidak Aktif' 
+        WHERE terakhir_login IS NOT NULL 
+        AND TIMESTAMPDIFF(DAY, terakhir_login, NOW()) >= ?
+        AND status = 'Aktif'
+    ");
+        $stmt->execute([$days]);
+    }
 }

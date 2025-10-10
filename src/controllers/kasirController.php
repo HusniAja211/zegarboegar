@@ -77,6 +77,15 @@ class KasirController
 
             if ($dataKasir) {
                 SessionManager::login($dataKasir);
+
+                // Simpan waktu aktivitas terakhir
+                $kasir->updateLastActivity($dataKasir['id_kasir']);
+
+                // Jika status sebelumnya Tidak Aktif, aktifkan kembali
+                if ($dataKasir['status'] === 'Tidak Aktif') {
+                    $kasir->updatePartial($dataKasir['id_kasir'], ['status' => 'Aktif']);
+                }
+
                 header("Location: /dashboard");
                 exit;
             } else {
@@ -246,16 +255,35 @@ class KasirController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $updateData = [];
 
-            // Hanya update jika ada input
+            // ✅ Cek perubahan nama
             if (!empty($_POST['nama_kasir'])) {
                 $updateData['nama_kasir'] = trim($_POST['nama_kasir']);
             }
+
+            // ✅ Cek perubahan email — pastikan unik
             if (!empty($_POST['email_kasir'])) {
-                $updateData['email_kasir'] = trim($_POST['email_kasir']);
+                $emailBaru = trim($_POST['email_kasir']);
+
+                // Jika email berubah, cek apakah sudah digunakan kasir lain
+                if ($emailBaru !== $kasir['email_kasir']) {
+                    $emailExist = $kasirModel->findByEmail($emailBaru);
+
+                    if ($emailExist && $emailExist['id_kasir'] != $id) {
+                        // Email sudah digunakan kasir lain
+                        header("Location: /kasir/$id?error=email_exists");
+                        exit;
+                    }
+
+                    $updateData['email_kasir'] = $emailBaru;
+                }
             }
+
+            // ✅ Cek perubahan nomor telepon
             if (!empty($_POST['nomor_telepon_kasir'])) {
                 $updateData['nomor_telepon_kasir'] = trim($_POST['nomor_telepon_kasir']);
             }
+
+            // ✅ Cek perubahan status
             if (!empty($_POST['status'])) {
                 $updateData['status'] = trim($_POST['status']);
             }
@@ -274,24 +302,17 @@ class KasirController
             // 🖼️ Upload foto baru (opsional)
             if (isset($_FILES['gambar_kasir']) && $_FILES['gambar_kasir']['error'] === UPLOAD_ERR_OK) {
                 $fileTmp = $_FILES['gambar_kasir']['tmp_name'];
-                $fileType = $_FILES['gambar_kasir']['type'];
-
-                // Tentukan ekstensi file
-                $ext = pathinfo($_FILES['gambar_kasir']['name'], PATHINFO_EXTENSION);
-                $ext = strtolower($ext);
-
-                // Validasi tipe file
+                $ext = strtolower(pathinfo($_FILES['gambar_kasir']['name'], PATHINFO_EXTENSION));
                 $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+
                 if (!in_array($ext, $allowed)) {
                     header("Location: /kasir/detail/$id?error=invalid_filetype");
                     exit;
                 }
 
-                // Folder tujuan
                 $targetDir = __DIR__ . '/../../public/images/pfp/';
                 if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
 
-                // 🔹 Buat nama file unik: id_namakasir.ekstensi
                 $namaKasirBersih = preg_replace('/[^a-zA-Z0-9_-]/', '', str_replace(' ', '_', $kasir['nama_kasir']));
                 $fileName = "{$id}_{$namaKasirBersih}.{$ext}";
                 $targetPath = $targetDir . $fileName;
@@ -302,24 +323,25 @@ class KasirController
                     if (file_exists($oldFile)) unlink($oldFile);
                 }
 
-                // Simpan file baru
                 if (move_uploaded_file($fileTmp, $targetPath)) {
-                    // Simpan hanya relative path agar lebih fleksibel
                     $updateData['gambar_kasir'] = '/images/pfp/' . $fileName;
                 } else {
                     header("Location: /kasir/detail/$id?error=upload_failed");
                     exit;
                 }
             }
+
             // ✅ Jalankan update hanya jika ada data diubah
             if (!empty($updateData)) {
                 $kasirModel->updatePartial($id, $updateData);
-                header("Location: /kasir/detail/$id?success=updated");
+                header("Location: /kasir/$id?success=updated");
                 exit;
             } else {
-                header("Location: /kasir/detail/$id?info=no_changes");
+                header("Location: /kasir/$id?info=no_changes");
                 exit;
             }
         }
     }
+
+
 }

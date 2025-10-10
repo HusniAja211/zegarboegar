@@ -25,7 +25,7 @@ require_once __DIR__ . '/components/header.php';
         </thead>
         <tbody>
           <?php foreach ($dataPage as $index => $row): ?>
-            <tr class="hover:bg-gray-50">
+            <tr>
               <td class="px-4 py-2 border text-center"><?= $start + $index + 1 ?></td>
               <td class="px-4 py-2 border text-center"><?= $row['id_kasir'] ?></td>
               <td class="px-4 py-2 border font-semibold"><?= $row['nama_kasir'] ?></td>

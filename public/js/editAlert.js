@@ -36,6 +36,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 case "unauthorized":
                     text = "Sesi kamu habis. Silakan login ulang.";
                     break;
+                case "email_exists":
+                    text = "Email sudah digunakan kasir lain.";
+                break;
                 default:
                     text = "Terjadi kesalahan yang tidak diketahui.";
             }

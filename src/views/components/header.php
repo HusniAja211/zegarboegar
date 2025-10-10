@@ -34,8 +34,8 @@ $kasir = SessionManager::kasir();
                 <li><a href="/dashboard" class="hover:text-blue-600">Dashboard</a></li>
                 <li><a href="/kasir" class="hover:text-blue-600">Kasir</a></li>
                 <li><a href="/transaksi" class="hover:text-blue-600">Transaksi</a></li>
-                <li><a href="#" class="hover:text-blue-600">Produk</a></li>
-                <li><a href="#" class="hover:text-blue-600">Laporan</a></li>
+                <li><a href="/produk" class="hover:text-blue-600">Produk</a></li>
+                <li><a href="/laporan" class="hover:text-blue-600">Laporan</a></li>
                 <li><a href="#" class="hover:text-blue-600">
                     <svg fill="#000000" version="1.1" id="Capa_1" 
                     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
