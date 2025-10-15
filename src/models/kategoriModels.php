@@ -14,7 +14,7 @@ class Kategori
 
     public function getAllKategori()
     {
-        $stmt = $this->db->query("SELECT * FROM {$this->table} ORDER BY nama_kategori ASC");
+        $stmt = $this->db->query("SELECT * FROM {$this->table} ORDER BY nama_kategori desc");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -23,6 +23,13 @@ class Kategori
         $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE id_kategori = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function isNamaExists($nama)
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM {$this->table} WHERE nama_kategori = :nama");
+        $stmt->execute([':nama' => $nama]);
+        return $stmt->fetchColumn() > 0;
     }
 
     public function addKategori($nama)

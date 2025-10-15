@@ -10,16 +10,19 @@
         </div>
     </footer>
 
-    
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="/js/deleteAlert.js"></script>
-<script src="/js/editAlert.js"></script>
-<script src="/js/dropdown.js"></script>
-
 <!-- File JS Terpisah -->
-<script src="/js/produk.js" defer></script>
+<script defer src="/js/produk.js"></script>
 <!-- AlpineJS -->
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-<script src="/js/confirmDelete.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+<!-- SweetAlert JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Script umum -->
+<script defer src="/js/dropdown.js"></script>
+<script defer src="/js/kasir.js"></script>
+<script defer src="/js/kategori.js"></script>
+<script defer src="/js/member.js"></script>
+
 </body>
 </html>

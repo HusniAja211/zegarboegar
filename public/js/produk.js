@@ -3,6 +3,12 @@ document.addEventListener('alpine:init', () => {
         tab: '',
         products: [],
         loading: false,
+        kategoriList: [],
+
+        init() { // <-- Tambahkan init method jika Anda menggunakannya di x-init
+        // Logic yang ingin dijalankan saat komponen Alpine diinisialisasi
+        this.loadProducts('Semua'); // Contoh: Memuat kategori default
+        },
 
         async loadProducts(kategori) {
             this.tab = kategori;
@@ -93,8 +99,6 @@ document.addEventListener('alpine:init', () => {
                                 class="block w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 text-center py-2 rounded-lg text-sm font-semibold uppercase tracking-wide transition duration-150 shadow-md shadow-yellow-300">
                                 ✏️ Edit Produk
                             </a>
-
-                            
 
                         </div>
 
@@ -252,4 +256,3 @@ async function confirmDelete(id) {
         }
     }
 }
-

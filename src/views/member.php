@@ -8,8 +8,8 @@ require_once __DIR__ . '/components/header.php';
 
     <!-- Title -->
      <div class="flex flex-row justify-between">
-      <h1 class="text-2xl font-bold text-black">Data Kasir</h1>
-      <h1 class="text-2xl font-bold text-black">Tambah Kasir</h1>
+      <h1 class="text-2xl font-bold text-black">Data Member</h1>
+      <h1 class="text-2xl font-bold text-black"><a href="/tambahmember">Tambah Member</a></h1>
      </div>
     
 
@@ -19,11 +19,10 @@ require_once __DIR__ . '/components/header.php';
         <thead class="bg-blue-600 text-white">
           <tr>
             <th class="px-4 py-3 border">No</th>
-            <th class="px-4 py-3 border">ID</th>
+            <th class="px-4 py-3 border">ID Member</th>
             <th class="px-4 py-3 border">Nama</th>
-            <th class="px-4 py-3 border">Email</th>
             <th class="px-4 py-3 border">Nomor Telepon</th>
-            <th class="px-4 py-3 border">Status</th>
+            <th class="px-4 py-3 border">Email</th>
             <th class="px-4 py-3 border">Aksi</th>
           </tr>
         </thead>
@@ -31,20 +30,15 @@ require_once __DIR__ . '/components/header.php';
           <?php foreach ($dataPage as $index => $row): ?>
             <tr>
               <td class="px-4 py-2 border text-center"><?= $start + $index + 1 ?></td>
-              <td class="px-4 py-2 border text-center"><?= $row['id_kasir'] ?></td>
-              <td class="px-4 py-2 border font-semibold"><?= $row['nama_kasir'] ?></td>
-              <td class="px-4 py-2 border"><?= $row['email_kasir'] ?></td>
-              <td class="px-4 py-2 border text-center"><?= $row['nomor_telepon_kasir'] ?></td>
-              <?php if($row['status'] == 'Aktif' ) :?>
-                <td class="text-blue-700 px-4 py-2 border text-center"><?= $row['status'] ?></td>
-              <?php else : ?>
-                <td style="color:red" class="px-4 py-2 border text-center"><?= $row['status'] ?></td>
-              <?php endif; ?>
+              <td class="px-4 py-2 border text-center"><?= $row['id_member'] ?></td>
+              <td class="px-4 py-2 border font-semibold"><?= $row['nama_member'] ?></td>
+              <td class="px-4 py-2 border"><?= $row['no_hp'] ?></td>
+              <td class="px-4 py-2 border text-center"><?= $row['email'] ?></td>
               <td class="px-4 py-2 border text-center space-x-3">
-                <a href="/kasir/<?= $row['id_kasir'] ?>" style="color: blue" class="hover:underline">Lihat</a>
+                <a href="/member/<?= $row['id_member'] ?>" style="color: blue" class="hover:underline">Lihat</a>
                 <button style="color: red"
-                  class="hover:underline btn-delete"
-                  data-id="<?= $row['id_kasir'] ?>">Hapus
+                  class="hover:underline btn-delete-member"
+                  data-id="<?= $row['id_member'] ?>">Hapus
                 </button>
               </td>
             </tr>

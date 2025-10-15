@@ -48,7 +48,7 @@ class Produk
             p.stok,
             IFNULL(p.gambar, '/images/default_pfp/defaultPFP.jpg') AS gambar,
             k.nama_kategori
-        FROM t_produk p
+        FROM {$this->table} p
         INNER JOIN t_kategori_produk k ON p.id_kategori = k.id_kategori
         WHERE k.nama_kategori = :kategori
         ORDER BY p.nama_produk ASC
@@ -114,14 +114,14 @@ class Produk
 
     public function isKodeExists($kode)
     {
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM t_produk WHERE kode_produk = :kode");
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM {$this->table} WHERE kode_produk = :kode");
         $stmt->execute([':kode' => $kode]);
         return $stmt->fetchColumn() > 0;
     }
 
     public function isNamaExists($nama)
     {
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM t_produk WHERE nama_produk = :nama");
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM {$this->table} WHERE nama_produk = :nama");
         $stmt->execute([':nama' => $nama]);
         return $stmt->fetchColumn() > 0;
     }
