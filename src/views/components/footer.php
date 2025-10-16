@@ -10,19 +10,15 @@
         </div>
     </footer>
 
-<!-- File JS Terpisah -->
-<script defer src="/js/produk.js"></script>
-<!-- AlpineJS -->
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
 <!-- SweetAlert JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- Script umum -->
-<script defer src="/js/dropdown.js"></script>
+<!-- Script umum --> 
+ <script defer src="/js/keranjang.js"></script>
+ <script defer src="/js/produk.js"></script>
+ <script defer src="/js/dropdown.js"></script>
 <script defer src="/js/kasir.js"></script>
 <script defer src="/js/kategori.js"></script>
 <script defer src="/js/member.js"></script>
-
 </body>
 </html>

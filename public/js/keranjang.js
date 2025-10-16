@@ -1,18 +1,12 @@
-// File: /js/keranjang.js
+console.log("Keranjang.js dimuat!");
 
 document.addEventListener('DOMContentLoaded', () => {
-  // === 1️⃣ CEK APAKAH HALAMAN INI ADALAH KERANJANG ===
   const totalTagihanElement = document.getElementById('total-tagihan');
-
-  // 🚨 Jika elemen utama keranjang tidak ditemukan → hentikan script
   if (!totalTagihanElement || !totalTagihanElement.dataset.totalKotor) {
-    console.info('[Keranjang.js] Bukan halaman keranjang — script dilewati.');
+    console.info('[Keranjang.js] Bukan halaman keranjang — dilewati.');
     return;
   }
 
-  console.log('[Keranjang.js] Halaman keranjang terdeteksi, inisialisasi...');
-
-  // === 2️⃣ ELEMENT DOM YANG DIGUNAKAN ===
   const inputPoin = document.getElementById('input-potongan-poin');
   const inputUang = document.getElementById('input-uang');
   const kembalianElement = document.getElementById('kembalian');
@@ -20,88 +14,157 @@ document.addEventListener('DOMContentLoaded', () => {
   const inputMemberTelp = document.getElementById('input-member-telp');
   const memberInfoElement = document.getElementById('member-info');
   const poinSaatIniElement = document.getElementById('poin-saat-ini');
+  const mainEl = document.querySelector('main');
 
-  // === 3️⃣ DATA AWAL DARI PHP ===
-  const totalKotor = parseFloat(totalTagihanElement.dataset.totalKotor);
-  const nilaiPoin = 1; // 1 poin = Rp 1
+  if (!mainEl) {
+    console.error('[Keranjang.js] Elemen <main> tidak ditemukan.');
+    return;
+  }
 
-  // === 4️⃣ DATABASE MEMBER (contoh statis, nanti bisa dari API/PHP) ===
-  const memberDatabase = {
-    '081234567890': { nama: 'HusniNice1', poin: 50000 },
-    '085000111222': { nama: 'Budi Santoso', poin: 12500 },
-  };
-
+  const totalKotor = parseFloat(totalTagihanElement.dataset.totalKotor) || 0;
+  const nilaiPoin = 100;
   let maxPoin = 0;
 
-  // === 5️⃣ FORMAT RUPIAH ===
-  const formatRupiah = (angka) => {
-    return 'Rp ' + Math.abs(angka).toLocaleString('id-ID');
-  };
+  const formatRupiah = (angka) => 'Rp ' + Math.abs(angka).toLocaleString('id-ID');
 
-  // === 6️⃣ CARI MEMBER BERDASARKAN NOMOR TELEPON ===
-  const cariMember = () => {
-    const telp = inputMemberTelp.value.replace(/[^0-9]/g, '');
-    const member = memberDatabase[telp];
+  const cariMember = async () => {
+  const telp = (inputMemberTelp?.value || '').replace(/[^0-9]/g, '');
+  if (!telp) return;
 
-    maxPoin = 0;
-    inputPoin.value = 0;
-    inputPoin.disabled = true;
+  try {
+    const res = await fetch(`/member/api?t=${encodeURIComponent(telp)}`);
+    const data = await res.json();
 
-    if (member) {
-      maxPoin = member.poin;
-      memberInfoElement.textContent = `Member: ${member.nama}`;
-      poinSaatIniElement.textContent = `${formatRupiah(maxPoin)} (${maxPoin} Poin)`;
-      poinSaatIniElement.dataset.poinNilai = maxPoin;
+    if (res.ok && data.status === 'success') {
+      maxPoin = data.poin;
+      memberInfoElement.textContent = `Member: ${data.nama}`;
+      poinSaatIniElement.textContent = `Rp ${data.poin.toLocaleString()} (${data.poin} Poin)`;
       inputPoin.disabled = false;
     } else {
-      memberInfoElement.textContent = 'Member belum teridentifikasi.';
-      poinSaatIniElement.textContent = `${formatRupiah(0)} (0 Poin)`;
-      poinSaatIniElement.dataset.poinNilai = 0;
+      memberInfoElement.textContent = 'Member tidak ditemukan.';
+      poinSaatIniElement.textContent = 'Rp 0 (0 Poin)';
+      inputPoin.disabled = true;
+      maxPoin = 0;
     }
 
     hitungPembayaran();
-  };
+  } catch (err) {
+    console.error('Gagal fetch member:', err);
+  }
+};
 
-  // === 7️⃣ HITUNG PEMBAYARAN SECARA DINAMIS ===
+
   const hitungPembayaran = () => {
-    let potongan = parseFloat(inputPoin.value) || 0;
-    let uangMasuk = parseFloat(inputUang.value) || 0;
+    let potongan = parseFloat(inputPoin?.value) || 0;
+    let uangMasuk = parseFloat(inputUang?.value) || 0;
 
     if (maxPoin > 0 && potongan > maxPoin) {
       potongan = maxPoin;
       inputPoin.value = maxPoin;
     }
 
-    const totalTagihanBersih = totalKotor - potongan * nilaiPoin;
-
-    if (potongan * nilaiPoin > totalKotor) {
-      potongan = totalKotor / nilaiPoin;
-      inputPoin.value = potongan;
-    }
-
+    const totalTagihanBersih = Math.max(0, totalKotor - potongan * nilaiPoin);
     const sisaKembalian = uangMasuk - totalTagihanBersih;
 
     totalTagihanElement.textContent = formatRupiah(totalTagihanBersih);
 
     if (sisaKembalian >= 0) {
       kembalianElement.textContent = formatRupiah(sisaKembalian);
-      kembalianElement.closest('div').classList.remove('bg-red-50', 'border-red-300');
-      kembalianElement.closest('div').classList.add('bg-blue-50', 'border-blue-300');
+      kembalianElement.closest('div')?.classList?.remove('bg-red-50', 'border-red-300');
+      kembalianElement.closest('div')?.classList?.add('bg-blue-50', 'border-blue-300');
       btnCheckout.disabled = false;
     } else {
       kembalianElement.textContent = formatRupiah(sisaKembalian) + ' (Kurang)';
-      kembalianElement.closest('div').classList.remove('bg-blue-50', 'border-blue-300');
-      kembalianElement.closest('div').classList.add('bg-red-50', 'border-red-300');
+      kembalianElement.closest('div')?.classList?.remove('bg-blue-50', 'border-blue-300');
+      kembalianElement.closest('div')?.classList?.add('bg-red-50', 'border-red-300');
       btnCheckout.disabled = true;
     }
   };
 
-  // === 8️⃣ EVENT LISTENERS ===
-  inputPoin.addEventListener('input', hitungPembayaran);
-  inputUang.addEventListener('input', hitungPembayaran);
-  inputMemberTelp.addEventListener('input', cariMember);
+  // === Tombol Aksi (+, −, hapus) ===
+  mainEl.addEventListener('click', async (e) => {
+    const btn = e.target.closest('button[data-action][data-id]');
+    if (!btn) return;
 
-  // === 9️⃣ INISIALISASI AWAL ===
+    const id = btn.dataset.id;
+    const action = btn.dataset.action;
+
+    try {
+      let res;
+
+      if (action === 'plus') {
+        res = await fetch(`/keranjang/tambah/${encodeURIComponent(id)}`, { method: 'GET' });
+      } 
+      else if (action === 'minus') {
+        res = await fetch(`/keranjang/kurangi/${encodeURIComponent(id)}`, { method: 'POST' });
+      } 
+      else if (action === 'delete') {
+        // 🔥 Pakai SweetAlert2 untuk konfirmasi hapus
+        const result = await Swal.fire({
+          title: 'Hapus Produk?',
+          text: 'Produk ini akan dihapus dari keranjang Anda.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Ya, hapus',
+          cancelButtonText: 'Batal',
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          reverseButtons: true
+        });
+
+        if (!result.isConfirmed) return;
+
+        // Tampilkan loading sebelum fetch
+        Swal.fire({
+          title: 'Menghapus...',
+          text: 'Mohon tunggu sebentar',
+          didOpen: () => Swal.showLoading(),
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          showConfirmButton: false
+        });
+
+        res = await fetch(`/keranjang/hapus/${encodeURIComponent(id)}`, { method: 'POST' });
+      }
+
+      if (res) {
+        const data = await res.json();
+
+        if (res.ok && data.status === 'success') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: 'Produk telah dihapus dari keranjang.',
+            timer: 1500,
+            showConfirmButton: false
+          }).then(() => {
+            window.location.reload();
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Gagal',
+            text: data.message || 'Terjadi kesalahan saat menghapus.',
+          });
+        }
+      }
+
+    } catch (err) {
+      console.error('[Keranjang.js] Error:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Gagal Terhubung',
+        text: 'Tidak dapat menghubungi server. Coba lagi nanti.',
+      });
+    }
+  });
+
+  // === Input events ===
+  inputPoin?.addEventListener('input', hitungPembayaran);
+  inputUang?.addEventListener('input', hitungPembayaran);
+  inputMemberTelp?.addEventListener('input', cariMember);
+
+  // Init awal
   cariMember();
   hitungPembayaran();
 });

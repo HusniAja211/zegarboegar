@@ -1,127 +1,99 @@
-document.addEventListener('alpine:init', () => {
-    Alpine.data('produkPage', () => ({
-        tab: '',
-        products: [],
-        loading: false,
-        kategoriList: [],
+document.addEventListener('DOMContentLoaded', () => {
+  const produkContainer = document.getElementById('produkContainer');
+  const kategoriTabs = document.querySelectorAll('.kategori-tab');
+  const loadingMessage = document.getElementById('loadingMessage');
 
-        init() { // <-- Tambahkan init method jika Anda menggunakannya di x-init
-        // Logic yang ingin dijalankan saat komponen Alpine diinisialisasi
-        this.loadProducts('Semua'); // Contoh: Memuat kategori default
-        },
+   if (!produkContainer || kategoriTabs.length === 0 || !loadingMessage) {
+    return;
+  }
 
-        async loadProducts(kategori) {
-            this.tab = kategori;
-            this.loading = true;
+  let activeTab = kategoriTabs[0]?.dataset.kategori || 'Semua Produk';
 
-            try {
-                const res = await fetch(`/produk/api?kategori=${encodeURIComponent(kategori)}`);
-                const data = await res.json();
-                this.products = data;
-                this.renderProducts();
-            } catch (e) {
-                console.error('Gagal memuat produk:', e);
-            } finally {
-                this.loading = false;
-            }
-        },
+  // --- Fungsi render card produk ---
+  function renderProducts(products) {
+    produkContainer.innerHTML = products.map(p => `
+      <div class="bg-white shadow-lg rounded-xl p-5 text-center hover:shadow-xl transition-all space-y-3">
+        <img src="${p.gambar}" alt="${p.nama}" class="w-32 h-32 mx-auto mb-3 object-cover rounded-lg">
+        <h3 class="font-semibold text-lg text-indigo-700 mb-1">${p.nama}</h3>
+        <p class="text-gray-600 mb-2">Rp ${Number(p.harga).toLocaleString()}</p>
 
-        changeTab(kategori) {
-            if (this.tab !== kategori) {
-                this.loadProducts(kategori);
-            }
-        },
+        <button 
+          class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition w-full"
+          data-id="${p.id_produk}"
+          data-action="add">
+          🛒 Tambah ke Keranjang
+        </button>
 
-        renderProducts() {
-            const container = document.getElementById('produkContainer');
-            container.innerHTML = '';
+        <a href="/produk/edit/${p.id_produk}" style="background-color: green"
+           class="block w-full hover:bg-green-600 text-white text-center py-2 rounded-lg text-sm font-semibold uppercase tracking-wide transition duration-150 shadow-md">
+          ✏️ Edit Produk
+        </a>
 
-            if (!this.products || this.products.length === 0) {
-                container.innerHTML = `<p class="text-center col-span-full text-gray-500">Tidak ada produk di kategori ini.</p>`;
-                return;
-            }
+        <button 
+          class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition w-full"
+          data-id="${p.id_produk}"
+          data-action="delete">
+          🗑️ Hapus Data
+        </button>
+      </div>
+    `).join('');
+  }
 
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+  // --- Fungsi ambil data produk ---
+  async function loadProducts(kategori) {
+    loadingMessage.classList.remove('hidden');
+    produkContainer.innerHTML = '';
 
-            this.products.forEach(p => {
-                let expDate = null;
-                if (p.kadaluarsa && /^\d{4}-\d{2}-\d{2}$/.test(p.kadaluarsa)) {
-                    const [y, m, d] = p.kadaluarsa.split('-').map(Number);
-                    expDate = new Date(y, m - 1, d);
-                    expDate.setHours(0, 0, 0, 0);
-                }
+    try {
+      const res = await fetch(`/produk/api?kategori=${encodeURIComponent(kategori)}`);
+      const data = await res.json();
+      renderProducts(data);
+    } catch (err) {
+      console.error('Gagal memuat produk:', err);
+      produkContainer.innerHTML = '<p class="text-center text-red-500">Gagal memuat produk.</p>';
+    } finally {
+      loadingMessage.classList.add('hidden');
+    }
+  }
 
-                const isOutOfStock = Number(p.stok) <= 0;
-                const isExpired = expDate && expDate.getTime() <= today.getTime();
-                const isUnavailable = isOutOfStock || isExpired;
+  // --- Event klik kategori ---
+  kategoriTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      kategoriTabs.forEach(t => t.classList.remove('border-b-4', 'border-indigo-600', 'bg-indigo-100', 'text-indigo-800'));
+      tab.classList.add('border-b-4', 'border-indigo-600', 'bg-indigo-100', 'text-indigo-800');
 
-                const btnClass = isUnavailable
-                    ? 'bg-red-600 text-white cursor-not-allowed opacity-80'
-                    : 'bg-indigo-600 hover:bg-indigo-700 transform group-hover:translate-y-[-2px]';
-                const btnText = isUnavailable
-                    ? (isExpired ? 'Kadaluarsa' : 'Stok Habis')
-                    : 'Beli';
-                const btnDisabled = isUnavailable ? 'disabled' : '';
+      activeTab = tab.dataset.kategori;
+      loadProducts(activeTab);
+    });
+  });
 
-                container.innerHTML += `
-                    <div class="max-w-xs bg-white rounded-lg shadow-lg overflow-hidden transform hover:shadow-xl hover:scale-[1.02] transition duration-200 ease-in-out cursor-pointer group">
-                        <div class="relative h-36 w-full">
-                            <img class="w-full h-full object-cover transition duration-500 group-hover:opacity-90 ${isExpired ? 'grayscale' : ''}" 
-                                src="${p.gambar}" 
-                                alt="Gambar Produk ${p.nama}">
-                        </div>
+  // --- Event klik tombol pada produk ---
+  produkContainer.addEventListener('click', async (e) => {
+    const btn = e.target.closest('button[data-id]');
+    if (!btn) return;
 
-                        <div class="p-3">
-                            <h4 class="text-lg font-bold text-gray-900 leading-tight mb-1 truncate">${p.nama}</h4>
-                            <p class="text-[11px] text-gray-500 mb-2">Kode: ${p.kode}</p>
+    const idProduk = btn.dataset.id;
+    const action = btn.dataset.action;
 
-                            <div class="flex items-center justify-between mb-1">
-                                <p class="text-xl font-extrabold text-indigo-600">${this.formatRupiah(p.harga)}</p>
-                                <p class="text-xs font-semibold ${isOutOfStock ? 'text-red-700 bg-red-100' : 'text-green-700 bg-green-100'} px-2.5 py-0.5 rounded-full">
-                                    Stok: ${p.stok}
-                                </p>
-                            </div>
+    // Tambah ke keranjang
+    if (action === 'add') {
+      try {
+        const res = await fetch(`/keranjang/tambah/${idProduk}`, { method: 'GET' });
+        const result = await res.json();
 
-                            ${p.kadaluarsa ? `
-                                <p class="text-[11px] ${isExpired ? 'text-red-600 font-semibold' : 'text-gray-500'}">
-                                    Kadaluarsa: ${new Date(p.kadaluarsa).toLocaleDateString('id-ID')}
-                                </p>` : ''}
-                        </div>
-
-                        <div class="p-3 pt-0">
-                            <button ${btnDisabled}
-                                class="w-full ${btnClass} py-2 rounded-lg text-sm font-semibold uppercase tracking-wide transition duration-150 shadow-md ${isUnavailable ? 'shadow-red-300' : 'shadow-indigo-300'}">
-                                ${btnText}
-                            </button>
-
-                            <a href="/produk/edit/${p.id_produk}" 
-                                class="block w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 text-center py-2 rounded-lg text-sm font-semibold uppercase tracking-wide transition duration-150 shadow-md shadow-yellow-300">
-                                ✏️ Edit Produk
-                            </a>
-
-                        </div>
-
-                        <div class="p-2 bg-gray-50 text-center border-t border-gray-200">
-                            <p class="text-[10px] text-gray-500 mb-0.5">Barcode:</p>
-                            <div class="visual-barcode font-mono tracking-wider text-gray-600 text-xs">
-                                ${p.barcode ?? '-'}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-        },
-
-        formatRupiah(angka) {
-            return 'Rp ' + angka.toLocaleString('id-ID');
+        if (result.status === 'success') {
+          Swal.fire('Berhasil', 'Produk ditambahkan ke keranjang!', 'success');
+        } else {
+          Swal.fire('Gagal', result.message || 'Terjadi kesalahan', 'error');
         }
-    }));
-});
+      } catch (err) {
+        Swal.fire('Error', 'Tidak bisa menambahkan ke keranjang', 'error');
+      }
+    }
 
-// ✅ SWEETALERT KONFIRMASI DELETE
-async function confirmDelete(id) {
-    const result = await Swal.fire({
+    // Hapus produk
+    if (action === 'delete') {
+      const confirm = await Swal.fire({
         title: "Hapus Produk?",
         text: "Data produk akan dihapus secara permanen.",
         icon: "warning",
@@ -130,129 +102,33 @@ async function confirmDelete(id) {
         cancelButtonText: "Batal",
         confirmButtonColor: "#d33",
         cancelButtonColor: "#3085d6",
-        reverseButtons: true
-    });
+      });
 
-    if (result.isConfirmed) {
+      if (confirm.isConfirmed) {
         try {
-            const response = await fetch(`/produk/delete/${id}`, { method: "POST" });
-
-            if (response.redirected) {
-                window.location.href = response.url;
-                return;
-            }
-
+          const response = await fetch(`/produk/delete/${idProduk}`, { method: 'POST' });
+          if (response.ok) {
             Swal.fire({
-                icon: "success",
-                title: "Produk dihapus",
-                text: "Produk berhasil dihapus dari sistem.",
-                timer: 1500,
-                showConfirmButton: false
+              icon: "success",
+              title: "Produk dihapus",
+              text: "Produk berhasil dihapus dari sistem.",
+              timer: 1500,
+              showConfirmButton: false
             });
+            // reload ulang produk
+            loadProducts(activeTab);
+          } else {
+            Swal.fire('Gagal', 'Gagal menghapus produk.', 'error');
+          }
         } catch (error) {
-            Swal.fire({
-                icon: "error",
-                title: "Gagal menghapus",
-                text: "Terjadi kesalahan saat menghapus produk."
-            });
+          Swal.fire('Error', 'Terjadi kesalahan saat menghapus produk.', 'error');
         }
+      }
     }
-}
+  });
 
-// ✅ SWEETALERT GLOBAL UNTUK SUCCESS / ERROR
-document.addEventListener("DOMContentLoaded", () => {
-    const params = new URLSearchParams(window.location.search);
+  // --- Load awal ---
+  loadProducts(activeTab);
+  kategoriTabs[0]?.classList.add('border-b-4', 'border-indigo-600', 'bg-indigo-100', 'text-indigo-800');
 
-    if (params.has("success") || params.has("error")) {
-        let icon = "info", title = "", text = "";
-
-        if (params.get("success") === "created") {
-            icon = "success";
-            title = "Produk Ditambahkan!";
-            text = "Data produk baru berhasil disimpan.";
-        }
-
-        if (params.get("success") === "deleted") {
-            icon = "success";
-            title = "Produk Dihapus!";
-            text = "Produk berhasil dihapus dari sistem.";
-        }
-
-        if (params.get("error")) {
-            icon = "error";
-            title = "Gagal Menyimpan!";
-            switch (params.get("error")) {
-                case "invalid_file":
-                    text = "Format gambar tidak valid. Gunakan JPG, PNG, atau WEBP.";
-                    break;
-                case "upload_failed":
-                    text = "Upload gambar gagal. Coba lagi.";
-                    break;
-                case "save_failed":
-                    text = "Terjadi kesalahan saat menyimpan ke database.";
-                    break;
-                case "unauthorized":
-                    text = "Sesi kamu telah habis. Silakan login ulang.";
-                    break;
-                case "kode_exists":
-                case "nama_exists":
-                    text = "Kode atau nama produk telah dipakai.";
-                    break;
-                default:
-                    text = "Terjadi kesalahan yang tidak diketahui.";
-            }
-        }
-
-        Swal.fire({
-            icon,
-            title,
-            text,
-            confirmButtonColor: icon === "success" ? "#2563eb" : "#ef4444",
-        }).then(() => {
-            if (icon === "success") {
-                // Hapus query param tanpa reload ulang
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-        });
-    }
 });
-
-//Confirm Delete Function
-async function confirmDelete(id) {
-    const result = await Swal.fire({
-        title: "Hapus Produk?",
-        text: "Data produk akan dihapus secara permanen.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Ya, hapus",
-        cancelButtonText: "Batal",
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
-        reverseButtons: true
-    });
-
-    if (result.isConfirmed) {
-        try {
-            const response = await fetch(`/produk/delete/${id}`, { method: "POST" });
-
-            if (response.redirected) {
-                window.location.href = response.url;
-                return;
-            }
-
-            Swal.fire({
-                icon: "success",
-                title: "Produk dihapus",
-                text: "Produk berhasil dihapus dari sistem.",
-                timer: 1500,
-                showConfirmButton: false
-            });
-        } catch (error) {
-            Swal.fire({
-                icon: "error",
-                title: "Gagal menghapus",
-                text: "Terjadi kesalahan saat menghapus produk."
-            });
-        }
-    }
-}

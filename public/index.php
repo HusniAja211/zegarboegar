@@ -221,34 +221,42 @@ switch (true) {
     // Rute Keranjang
     // Diurutkan: delete, edit/id, detail/id, store (POST), update (POST), tambah (VIEW), list
     // -------------------------
-    // Halaman keranjang
     case ($path === '/keranjang'):
-        require __DIR__ . '/../src/controllers/keranjangController.php';
-        (new KeranjangController())->index();
+        // Ganti pemuatan manual dengan helper
+        routeToController('keranjangController', 'index');
         break;
 
     // Tambah ke keranjang
-    case (preg_match('#^/keranjang/tambah/(\d+)$#', $path, $matches) ? true : false):
-        require __DIR__ . '/../src/controllers/keranjangController.php';
-        (new KeranjangController())->tambah($matches[1]);
+    case (preg_match('#^/keranjang/tambah/(\d+)$#', $path, $matches)):
+        // Gunakan $path dan $matches untuk konsistensi, bukan $_SERVER['REQUEST_URI']
+        routeToController('keranjangController', 'tambah', [$matches[1]]);
         break;
 
     // Hapus item
-    case (preg_match('#^/keranjang/hapus/(\d+)$#', $path, $matches) ? true : false):
-        require __DIR__ . '/../src/controllers/keranjangController.php';
-        (new KeranjangController())->hapus($matches[1]);
+    case (preg_match('#^/keranjang/hapus/(\d+)$#', $path, $matches)):
+        // Note: Anda bisa menghapus `? true : false`
+        routeToController('keranjangController', 'hapus', [$matches[1]]);
+        break;
+
+    // Kurangi qty item
+    case (preg_match('#^/keranjang/kurangi/(\d+)$#', $path, $matches)):
+        // Gunakan $path dan $matches untuk konsistensi, bukan $_SERVER['REQUEST_URI']
+        routeToController('keranjangController', 'kurangi', [$matches[1]]);
         break;
 
     // Kosongkan keranjang
     case ($path === '/keranjang/kosongkan'):
-        require __DIR__ . '/../src/controllers/keranjangController.php';
-        (new KeranjangController())->kosongkan();
+        routeToController('keranjangController', 'kosongkan');
         break;
 
     // Checkout
     case ($path === '/keranjang/checkout'):
-        require __DIR__ . '/../src/controllers/keranjangController.php';
-        (new KeranjangController())->checkout();
+        routeToController('keranjangController', 'checkout');
+        break;
+    
+    // API Member berdasarkan no_hp
+    case (preg_match('#^/member/api$#', $path)):
+        routeToController('memberController', 'getMemberByTelp');
         break;
 
     // =========================================================================

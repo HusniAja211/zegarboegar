@@ -19,6 +19,13 @@ class Member
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getMemberByTelp($telp)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE no_hp = :no_hp");
+        $stmt->execute([':no_hp' => $telp]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
 
     // Registrasi member baru
     public function register($nama, $telepon, $email, $poin)

@@ -193,4 +193,28 @@ class MemberController
 
         require __DIR__ . '/../views/teMember.php';
     }
+
+    public function getMemberByTelp()
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        $telp = $_GET['t'] ?? '';
+
+        if (empty($telp)) {
+            echo json_encode(['status' => 'error', 'message' => 'Nomor telepon tidak diberikan.']);
+            return;
+        }
+
+        $member = $this->memberModel->getMemberByTelp($telp);
+
+        if ($member) {
+            echo json_encode([
+                'status' => 'success',
+                'nama' => $member['nama_member'],
+                'poin' => (int) $member['poin'],
+            ]);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Member tidak ditemukan.']);
+        }
+    }
 }
