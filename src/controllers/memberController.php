@@ -66,6 +66,12 @@ class MemberController
             $email = trim($_POST['email'] ?? '');
             $poin = (int) ($_POST['poin'] ?? 0);
 
+            // Normalisasi nomor HP ke format internasional
+            $telepon = preg_replace('/[^0-9]/', '', $telepon);
+            if (str_starts_with($telepon, '0')) {
+                $telepon = '62' . substr($telepon, 1);
+            }
+
             if (empty($nama) || empty($email)) {
                 header("Location: /teMember?error=empty");
                 exit;
@@ -124,6 +130,12 @@ class MemberController
             $telepon = trim($_POST['no_hp'] ?? '');
             $email = trim($_POST['email'] ?? '');
             $poin = (int) ($_POST['poin'] ?? 0);
+
+            // Normalisasi nomor HP ke format internasional
+            $telepon = preg_replace('/[^0-9]/', '', $telepon);
+            if (str_starts_with($telepon, '0')) {
+                $telepon = '62' . substr($telepon, 1);
+            }
 
             if (empty($id) || empty($nama) || empty($email)) {
                 header("Location: /member/edit/$id?error=empty");

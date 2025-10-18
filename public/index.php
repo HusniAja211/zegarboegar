@@ -51,6 +51,9 @@ function routeToController(string $controllerName, string $method, array $params
     call_user_func_array([$controller, $method], $params);
 }
 
+error_log("PATH: " . $path);
+
+
 // =========================================================================
 // II. ROUTING LOGIC
 // =========================================================================
@@ -258,6 +261,23 @@ switch (true) {
     case (preg_match('#^/member/api$#', $path)):
         routeToController('memberController', 'getMemberByTelp');
         break;
+
+    // =====================
+    // Rute Selesai Beli
+    // =====================
+    case (preg_match('#^/transaksi/selesai/([A-Z0-9]+)$#', $path, $matches)):
+        $_GET['kode'] = $matches[1];
+        require __DIR__ . '/../src/views/selesaiBeli.php';
+        break;
+
+    // Kirim WhatsApp berdasarkan kode transaksi
+    case (preg_match('#^/transaksi/kirimWA/([A-Z0-9]+)$#', $path, $matches) ? true : false):
+        $_GET['kode'] = $matches[1];
+        require_once __DIR__ . '/../src/helpers/sendToWhatsapp.php';
+        break;
+
+
+
 
     // =========================================================================
     // III. Default: 404 Not Found

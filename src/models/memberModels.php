@@ -19,10 +19,10 @@ class Member
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getMemberByTelp($telp)
+    public function getMemberByTelp($no_hp)
     {
         $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE no_hp = :no_hp");
-        $stmt->execute([':no_hp' => $telp]);
+        $stmt->execute([':no_hp' => $no_hp]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 

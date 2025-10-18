@@ -31,4 +31,23 @@ class DetailTransaksi
             ':subtotal' => $subtotal
         ]);
     }
+
+    public function getDetailByTransaksi($idTransaksi)
+    {
+        $stmt = $this->db->prepare("
+            SELECT 
+                d.id_detail,
+                d.id_transaksi,
+                d.id_produk,
+                d.qty,
+                d.harga,
+                p.nama_produk
+            FROM t_detail_transaksi d
+            JOIN t_produk p ON d.id_produk = p.id_produk
+            WHERE d.id_transaksi = :id
+        ");
+        $stmt->execute([':id' => $idTransaksi]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 }

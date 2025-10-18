@@ -126,4 +126,18 @@ class Produk
         return $stmt->fetchColumn() > 0;
     }
 
+    public function kurangiStok($id_produk, $qty)
+    {
+        $stmt = $this->db->prepare("
+            UPDATE t_produk 
+            SET stok = GREATEST(stok - :qty, 0)
+            WHERE id_produk = :id_produk
+        ");
+        return $stmt->execute([
+            ':qty' => $qty,
+            ':id_produk' => $id_produk
+        ]);
+    }
+
+
 }

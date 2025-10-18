@@ -1,9 +1,6 @@
-console.log("Keranjang.js dimuat!");
-
 document.addEventListener('DOMContentLoaded', () => {
   const totalTagihanElement = document.getElementById('total-tagihan');
   if (!totalTagihanElement || !totalTagihanElement.dataset.totalKotor) {
-    console.info('[Keranjang.js] Bukan halaman keranjang — dilewati.');
     return;
   }
 
@@ -22,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const totalKotor = parseFloat(totalTagihanElement.dataset.totalKotor) || 0;
-  const nilaiPoin = 100;
+  const nilaiPoin = 1;
   let maxPoin = 0;
 
   const formatRupiah = (angka) => 'Rp ' + Math.abs(angka).toLocaleString('id-ID');
@@ -158,6 +155,64 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
+
+  // Tombol Checkout
+  btnCheckout?.addEventListener('click', async () => {
+  const telp = (inputMemberTelp?.value || '').replace(/[^0-9]/g, '');
+  const poinDipakai = parseFloat(inputPoin?.value) || 0;
+  const bayar = parseFloat(inputUang?.value) || 0;
+  const totalTagihan = parseFloat(totalTagihanElement.dataset.totalKotor) || 0;
+
+  try {
+    Swal.fire({
+      title: 'Memproses Pembayaran...',
+      text: 'Mohon tunggu sebentar.',
+      didOpen: () => Swal.showLoading(),
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false
+    });
+
+    const res = await fetch('/keranjang/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        telp,
+        poinDipakai,
+        bayar,
+        totalTagihan
+      })
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.status === 'success') {
+      Swal.fire({
+        icon: 'success',
+        title: 'Pembayaran Berhasil!',
+        text: 'Anda akan diarahkan ke halaman struk.',
+        timer: 1500,
+        showConfirmButton: false
+      }).then(() => {
+          window.location.href = `/transaksi/selesai/${encodeURIComponent(data.kode_transaksi)}`;
+      });
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Gagal Checkout',
+        text: data.message || 'Terjadi kesalahan saat memproses transaksi.'
+      });
+    }
+  } catch (err) {
+    console.error('[Checkout Error]', err);
+    Swal.fire({
+      icon: 'error',
+      title: 'Gagal Terhubung',
+      text: 'Tidak dapat menghubungi server. Coba lagi nanti.'
+    });
+  }
+});
+
 
   // === Input events ===
   inputPoin?.addEventListener('input', hitungPembayaran);
