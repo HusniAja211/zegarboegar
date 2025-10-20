@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
           Swal.fire({
             icon: 'success',
             title: 'Berhasil!',
-            text: 'Produk telah dihapus dari keranjang.',
+            text: 'Jumlah Produk Berhasil Diubah.',
             timer: 1500,
             showConfirmButton: false
           }).then(() => {

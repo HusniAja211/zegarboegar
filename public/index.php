@@ -276,8 +276,11 @@ switch (true) {
         require_once __DIR__ . '/../src/helpers/sendToWhatsapp.php';
         break;
 
-
-
+    // Cetak PDF Invoice Pakai DOMPDF
+    case (preg_match('#^/transaksi/print-pdf/([A-Z0-9]+)$#', $path, $matches) ? true : false):
+        $_GET['kode'] = $matches[1];
+        require_once __DIR__ . '/../src/helpers/printInvoicePDF.php';
+        break;
 
     // =========================================================================
     // III. Default: 404 Not Found

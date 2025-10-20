@@ -219,6 +219,12 @@ class KasirController
             exit;
         }
 
+        // if ($kasir['id_kasir'] != $_SESSION['kasir']['id_kasir']) {
+        //     // hanya bisa menghapus diri sendiri
+        //     header("Location: /kasir?error=delete_others");
+        //     exit;
+        // }
+
         // 🔹 Cek status
         if (isset($kasir['status']) && $kasir['status'] === 'Aktif') {
             // Tidak boleh hapus kasir aktif
@@ -283,10 +289,10 @@ class KasirController
                 $updateData['nomor_telepon_kasir'] = trim($_POST['nomor_telepon_kasir']);
             }
 
-            // ✅ Cek perubahan status
-            if (!empty($_POST['status'])) {
-                $updateData['status'] = trim($_POST['status']);
-            }
+            // // ✅ Cek perubahan status
+            // if (!empty($_POST['status'])) {
+            //     $updateData['status'] = trim($_POST['status']);
+            // }
 
             // 🔐 Password baru (opsional)
             $passwordBaru = trim($_POST['password_baru'] ?? '');

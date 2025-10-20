@@ -47,14 +47,14 @@
               <input type="text" name="nomor_telepon_kasir" value="<?= htmlspecialchars($detailKasir['nomor_telepon_kasir']) ?>"
                      class="w-full bg-blue-50 border border-blue-200 rounded-lg px-4 py-2 text-gray-800">
             </div>
-            <div>
+            <!-- <div>
               <label class="text-sm font-medium text-gray-600 block mb-1">Status</label>
               <select name="status"
                       class="w-full bg-blue-50 border border-blue-200 rounded-lg px-4 py-2 text-gray-800">
                 <option value="Aktif" <?= $detailKasir['status'] === 'Aktif' ? 'selected' : '' ?>>Aktif</option>
                 <option value="Tidak Aktif" <?= $detailKasir['status'] === 'Tidak Aktif' ? 'selected' : '' ?>>Tidak Aktif</option>
               </select>
-            </div>
+            </div> -->
           </div>
 
           <!-- PASSWORD UPDATE SECTION -->

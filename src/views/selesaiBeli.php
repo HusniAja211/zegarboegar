@@ -99,54 +99,20 @@ if (!empty($transaksi['id_member'])) {
     <?php if (!empty($noHp)): ?>
       <button 
         id="btnWA"
+        data-kode="<?= htmlspecialchars($kode) ?>"
         style="background-color: green;"
         class="hover:bg-green-600 text-white px-4 py-2 rounded-lg transition">
         📱 Kirim Struk ke WhatsApp
       </button>
     <?php endif; ?>
   </div>
+
+  <div class="mt-6 flex flex-col sm:flex-row justify-center gap-3">
+    <a href="/transaksi/print-pdf/<?= htmlspecialchars($kode) ?>" 
+      target="_blank"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+      🧾 Cetak Invoice (PDF)
+    </a>
+
 </main>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-document.getElementById('btnWA')?.addEventListener('click', async () => {
-  const kode = "<?= $kode ?>";
-
-  Swal.fire({
-    title: 'Mengirim...',
-    text: 'Sedang mengirim struk ke WhatsApp pelanggan...',
-    allowOutsideClick: false,
-    didOpen: () => Swal.showLoading()
-  });
-
-  try {
-    const res = await fetch(`/transaksi/kirimWA/${encodeURIComponent(kode)}`)
-    const text = await res.text();
-
-    if (res.ok && text.includes('"status":true')) {
-      Swal.fire({
-        icon: 'success',
-        title: 'Berhasil!',
-        text: 'Struk berhasil dikirim ke WhatsApp pelanggan 🎉',
-        confirmButtonColor: '#16a34a'
-      });
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Gagal!',
-        text: 'Terjadi kesalahan saat mengirim struk ke WhatsApp.',
-        confirmButtonColor: '#d33'
-      });
-    }
-  } catch (err) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Error!',
-      text: 'Tidak dapat terhubung ke server.',
-      confirmButtonColor: '#d33'
-    });
-  }
-});
-</script>
-
 <?php require_once __DIR__ . '/components/footer.php'; ?>

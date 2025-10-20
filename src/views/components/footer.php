@@ -14,11 +14,12 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- Script umum --> 
- <script defer src="/js/keranjang.js"></script>
- <script defer src="/js/produk.js"></script>
- <script defer src="/js/dropdown.js"></script>
+<script defer src="/js/keranjang.js"></script>
+<script defer src="/js/produk.js"></script>
+<script defer src="/js/dropdown.js"></script>
 <script defer src="/js/kasir.js"></script>
 <script defer src="/js/kategori.js"></script>
 <script defer src="/js/member.js"></script>
+<script defer src="/js/selesaiBeli.js"></script>
 </body>
 </html>

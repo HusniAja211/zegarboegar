@@ -3,7 +3,6 @@
  * Gabungan logika konfirmasi delete, update, dan tampilan alert hasil operasi
  * Menggunakan library SweetAlert2 (Swal).
  */
-
 document.addEventListener('DOMContentLoaded', () => {
     
     // --- I. Fungsi Helper untuk Menampilkan SweetAlert ---
@@ -163,6 +162,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 case "failed":
                     text = 'Gagal menghapus data.';
                     break;
+
+                // case "delete_others":
+                //     console.log("Error param:", urlParams.get("error"));
+                //     text = 'Kamu hanya dapat menghapus akun kasir sendiri.';
+                //     break;
 
                 default:
                     text = "Terjadi kesalahan yang tidak diketahui.";

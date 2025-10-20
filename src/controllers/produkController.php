@@ -5,16 +5,13 @@ require_once __DIR__ . '/../helpers/SessionManager.php';
 
 class produkController
 {
-
     private $produkModel;
     private $kategoriModel;
-
     public function __construct()
     {
         $this->produkModel = new Produk();
         $this->kategoriModel = new Kategori();
     }
-
     public function listProduk()
     {
         SessionManager::start();
@@ -47,7 +44,6 @@ class produkController
 
         require __DIR__ . '/../views/detailProduk.php';
     }
-
     public function getProdukByKategori()
     {
         header('Content-Type: application/json');
@@ -71,7 +67,6 @@ class produkController
 
         echo json_encode($produkList);
     }
-
      public function tambahProduk()
     {
         SessionManager::start();
@@ -87,7 +82,6 @@ class produkController
         // Tampilkan view tambah produk
         require __DIR__ . '/../views/tambahProduk.php';
     }
-
     public function storeProduk()
     {
         SessionManager::start();
@@ -166,7 +160,6 @@ class produkController
             header("Location: /tambah-produk?error=save_failed");
         }
     }
-
     public function editProduk($id)
     {
         SessionManager::start();
@@ -185,7 +178,6 @@ class produkController
 
         require __DIR__ . '/../views/tambahProduk.php'; // Reuse form
     }
-
     public function updateProduk()
     {
         SessionManager::start();
@@ -232,7 +224,6 @@ class produkController
             exit;
         }
     }
-
     public function deleteProduk($id)
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -270,7 +261,4 @@ class produkController
         header("Location: /produk?success=deleted");
         exit;
     }
-
-
-
 }

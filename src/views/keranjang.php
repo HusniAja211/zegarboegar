@@ -95,7 +95,7 @@ function formatRupiah($angka) {
                         <label for="input-member-telp" class="block text-sm font-medium text-blue-900 mb-1">
                             Nomor Telepon Member (Opsional)
                         </label>
-                        <input type="text" id="input-member-telp" placeholder="Cari 08xx..." 
+                        <input type="text" id="input-member-telp" placeholder="Cari 628xx..." 
                             class="w-full p-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base font-semibold text-gray-800">
                         
                         <p id="member-info" class="text-sm mt-2 text-gray-500 italic">
