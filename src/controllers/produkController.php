@@ -102,7 +102,6 @@ class produkController
         $stok = $_POST['stok'] ?? 0;
         $kadaluarsa = $_POST['kadaluarsa'] ?? null;
         $deskripsi = $_POST['deskripsi'] ?? '';
-        $barcode = $kode . '_barcode';
 
         // 🔍 Cek apakah kode_produk atau nama_produk sudah ada
         if ($produkModel->isKodeExists($kode)) {
@@ -140,7 +139,7 @@ class produkController
             }
         }
 
-        // Simpan ke database
+        // Simpan ke database tanpa barcode
         $success = $produkModel->createProduk([
             'kode_produk' => $kode,
             'nama_produk' => $nama,
@@ -153,6 +152,26 @@ class produkController
             'deskripsi' => $deskripsi,
             'gambar' => $gambarPath,
         ]);
+
+        // Ambil ID terakhir
+        $lastId = $produkModel->getLastInsertId();
+
+        // Generate barcode value
+        $barcodeValue = strtoupper("ZB-{$kode}-{$lastId}");
+
+        // Generate barcode image
+        require_once __DIR__ . '/../../vendor/autoload.php';
+        $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
+        $barcodeImage = $generator->getBarcode($barcodeValue, $generator::TYPE_CODE_128, 2, 60);
+
+        // Simpan gambar barcode ke folder
+        $barcodeDir = __DIR__ . '/../../public/barcode/';
+        if (!is_dir($barcodeDir)) mkdir($barcodeDir, 0777, true);
+        $barcodePath = $barcodeDir . $barcodeValue . '.png';
+        file_put_contents($barcodePath, $barcodeImage);
+
+        // Simpan path & kode barcode ke database
+        $produkModel->updateBarcode($lastId, $barcodeValue);
 
         if ($success) {
             header("Location: /produk?success=created");

@@ -103,20 +103,28 @@ $submitColor = $isEdit ? 'bg-amber-600 hover:bg-amber-700 shadow-amber-400/40' :
                     <label for="deskripsi" class="block text-sm font-bold text-gray-700 mb-1">Deskripsi Produk</label>
                     <textarea id="deskripsi" name="deskripsi" rows="4"
                         class="w-full border border-gray-300 rounded-lg p-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition duration-200 shadow-sm resize-y"
-                        placeholder="Tulis detail produk di sini..."><?= htmlspecialchars($produk['deskripsi'] ?? '') ?></textarea>
+                        placeholder="Tulis detail produk di sini..."><?= htmlspecialchars($produk['deskripsi'] ?? '') ?></textarea>           
                 </div>
+
+                <?php if ($isEdit && !empty($produk['barcode'])): ?>
+                    <div class="mt-6">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Barcode Produk</label>
+                        <div class="flex flex-col items-center gap-2 border border-gray-200 bg-gray-50 rounded-lg p-4">
+                            <img 
+                                src="/barcode/<?= htmlspecialchars($produk['barcode']) ?>.png" 
+                                alt="Barcode <?= htmlspecialchars($produk['nama_produk']) ?>" 
+                                class="w-64 h-auto border border-gray-300 bg-white p-2 shadow-sm">
+                            <p class="text-xs text-gray-600 tracking-widest">
+                                <?= htmlspecialchars($produk['barcode']) ?>
+                            </p>
+                        </div>
+                    </div>
+                <?php endif; ?>
 
                 <div>
                     <label for="gambar" class="block text-sm font-bold text-gray-700 mb-1">Upload Gambar Produk</label>
                     <input type="file" id="gambar" name="gambar" accept="image/*"
                         class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200 transition duration-200 cursor-pointer"/>
-                    
-                    <?php if ($isEdit && !empty($produk['gambar'])): ?>
-                        <div class="mt-3">
-                            <p class="text-xs text-gray-500 mb-1">Gambar Saat Ini:</p>
-                            <img src="<?= htmlspecialchars($produk['gambar']) ?>" alt="Gambar Produk" class="w-28 h-28 rounded-lg shadow-md border border-gray-200 object-cover">
-                        </div>
-                    <?php endif; ?>
                 </div>
             </div>
 

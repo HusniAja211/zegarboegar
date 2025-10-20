@@ -88,13 +88,16 @@ switch (true) {
     case ($path === '/'):
         require __DIR__ . '/../src/views/landingPage.php';
         break;
-
-    case ($path === '/dashboard'):
-        require __DIR__ . '/../src/views/dashboard.php';
-        break;
         
-    case ($path === '/test'):
-        require __DIR__ . '/../src/views/test.php';
+    // case ($path === '/test'):
+    //     require __DIR__ . '/../src/views/test.php';
+    //     break;
+
+    // -------------------------
+    // Rute Dashboard
+    // -------------------------
+    case ($path === '/dashboard'):
+        routeToController('dashboardController', 'index');
         break;
 
     // -------------------------
@@ -103,7 +106,6 @@ switch (true) {
     case ($path === '/transaksi'):
         routeToController('transaksiController', 'listTransaksi');
         break;
-
 
     // -------------------------
     // Rute Kasir
@@ -235,6 +237,11 @@ switch (true) {
         routeToController('keranjangController', 'tambah', [$matches[1]]);
         break;
 
+    // Tambah via kode_produk (scanner)
+    case ($path === '/keranjang/tambahByKode'):
+        routeToController('keranjangController', 'tambahByKode');
+        break;
+
     // Hapus item
     case (preg_match('#^/keranjang/hapus/(\d+)$#', $path, $matches)):
         // Note: Anda bisa menghapus `? true : false`
@@ -280,6 +287,33 @@ switch (true) {
     case (preg_match('#^/transaksi/print-pdf/([A-Z0-9]+)$#', $path, $matches) ? true : false):
         $_GET['kode'] = $matches[1];
         require_once __DIR__ . '/../src/helpers/printInvoicePDF.php';
+        break;
+
+    // -------------------------
+    // Rute Laporan
+    // -------------------------
+    case ($path === '/laporan'):
+        routeToController('laporanController', 'index');
+        break;
+
+    // API laporan keuntungan tahunan
+    case ($path === '/laporan/keuntungan'):
+        routeToController('laporanController', 'getKeuntunganTahunan');
+        break;
+
+    // API laporan penjualan produk
+    case ($path === '/laporan/penjualan'):
+        routeToController('laporanController', 'getLaporanPenjualan');
+        break;
+
+    // Cetak PDF tabel laporan
+    case ($path === '/laporan/cetakTablePDF'):
+        routeToController('laporanController', 'cetakTablePDF');
+        break;
+
+    // Cetak PDF grafik keuntungan
+    case ($path === '/laporan/cetakGrafikPDF'):
+        routeToController('laporanController', 'cetakGrafikPDF');
         break;
 
     // =========================================================================

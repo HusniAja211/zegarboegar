@@ -10,7 +10,6 @@ class KeranjangController
     public function index()
     {
         SessionManager::start();
-        // ✅ Ganti 'cart' menjadi 'keranjang'
         $cart = $_SESSION['keranjang'] ?? []; 
         require __DIR__ . '/../views/keranjang.php';
     }
@@ -57,6 +56,58 @@ class KeranjangController
                 'keranjang' => $_SESSION['keranjang']
             ]);
             exit;
+    }
+
+    // Tambah produk ke keranjang via kode produk diketik
+    public function tambahByKode()
+    {
+        SessionManager::start();
+        header('Content-Type: application/json; charset=utf-8');
+
+        // Ambil JSON dari body
+        $rawData = file_get_contents("php://input");
+        $data = json_decode($rawData, true);
+        $kode_produk = $data['kode_produk'] ?? null;
+
+        if (!$kode_produk) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Kode produk tidak dikirim.']);
+            exit;
+        }
+
+        $produkModel = new Produk();
+        $produk = $produkModel->getProdukByKode($kode_produk);
+
+        if (!$produk) {
+            http_response_code(404);
+            echo json_encode(['status' => 'error', 'message' => 'Produk tidak ditemukan.']);
+            exit;
+        }
+
+        if (!isset($_SESSION['keranjang'])) {
+            $_SESSION['keranjang'] = [];
+        }
+
+        $id = $produk['id_produk'];
+
+        // Tambah qty kalau sudah ada
+        if (isset($_SESSION['keranjang'][$id])) {
+            $_SESSION['keranjang'][$id]['qty']++;
+        } else {
+            $_SESSION['keranjang'][$id] = [
+                'id_produk' => $produk['id_produk'],
+                'nama_produk' => $produk['nama_produk'],
+                'harga' => $produk['harga_jual'],
+                'qty' => 1
+            ];
+        }
+
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'Produk ditambahkan via kode.',
+            'keranjang' => $_SESSION['keranjang']
+        ]);
+        exit;
     }
 
     public function kurangi($id)
@@ -264,6 +315,5 @@ class KeranjangController
             exit;
         }
     }
-
 
 }

@@ -71,7 +71,7 @@ if (SessionManager::isLoggedIn()) {
 
                 <!-- Gambar Dashboard -->
                 <div data-aos="zoom-in" class="flex flex-col items-center">
-                    <img src="https://cdn.dribbble.com/userupload/16759387/file/original-42f2b27bd06b4a0f068ae9771f20f2ac.png?resize=752x&vertical=center"
+                    <img src="\images\dashboard.png"
                         alt="Dashboard Kasir"
                         class="rounded-xl shadow-lg mb-3">
                     <p class="text-sm text-blue-800">Tampilan dashboard untuk memantau penjualan dan laporan real-time.</p>
@@ -79,7 +79,7 @@ if (SessionManager::isLoggedIn()) {
 
                 <!-- Gambar Kasir Digital -->
                 <div data-aos="zoom-in" data-aos-delay="150" class="flex flex-col items-center">
-                    <img src="https://user-images.githubusercontent.com/61135648/85206187-da564b00-b352-11ea-8dcc-444a537813b4.png"
+                    <img src="\images\keranjang.png"
                         alt="Kasir Digital"
                         class="rounded-xl shadow-lg mb-3">
                     <p class="text-sm text-blue-800">Ilustrasi kasir digital dengan interface sederhana dan mudah digunakan.</p>

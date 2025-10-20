@@ -27,6 +27,15 @@ function formatRupiah($angka) {
             🛒 Keranjang Belanja & Pembayaran
         </h1>
 
+        <div class="mb-6">
+            <label for="input-barcode" class="block text-sm font-medium text-blue-900 mb-1">
+                Scan Barcode / Masukkan Kode Produk
+            </label>
+            <input type="text" id="input-barcode" placeholder="Scan atau ketik kode produk lalu tekan Enter"
+                class="w-full p-3 border border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base font-semibold text-gray-800"
+                autofocus autocomplete="off">
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
             <!-- Daftar Item di Keranjang -->

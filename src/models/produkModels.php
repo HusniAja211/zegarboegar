@@ -82,6 +82,27 @@ class Produk
         ]);
     }
 
+    public function updateBarcode($id, $barcode)
+    {
+        $stmt = $this->db->prepare("UPDATE {$this->table} SET barcode = :barcode WHERE id_produk = :id");
+        return $stmt->execute([
+            ':barcode' => $barcode,
+            ':id' => $id
+        ]);
+    }
+
+    public function getProdukByKode($kode_produk)
+    {
+        $stmt = $this->db->prepare("
+            SELECT id_produk, kode_produk, barcode, nama_produk, harga_jual, stok
+            FROM {$this->table}
+            WHERE kode_produk = :kode OR barcode = :kode
+            LIMIT 1
+        ");
+        $stmt->execute([':kode' => $kode_produk]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function updateProduk($id, $data)
     {
         // Siapkan bagian SET query hanya untuk field yang dikirim
@@ -111,7 +132,6 @@ class Produk
         return $stmt->execute([':id_produk' => $id]);
     }
 
-
     public function isKodeExists($kode)
     {
         $stmt = $this->db->prepare("SELECT COUNT(*) FROM {$this->table} WHERE kode_produk = :kode");
@@ -139,5 +159,9 @@ class Produk
         ]);
     }
 
+    public function getLastInsertId()
+    {
+        return $this->db->lastInsertId();
+    }
 
 }
