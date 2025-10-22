@@ -49,4 +49,19 @@ class Kategori
         $stmt = $this->db->prepare("DELETE FROM {$this->table} WHERE id_kategori = ?");
         return $stmt->execute([$id]);
     }
+
+    public function getKategoriWithCount()
+    {
+        $sql = "
+            SELECT k.*, 
+                COUNT(p.id_produk) AS jumlah_produk
+            FROM {$this->table} k
+            LEFT JOIN t_produk p ON p.id_kategori = k.id_kategori
+            GROUP BY k.id_kategori
+            ORDER BY k.nama_kategori DESC
+        ";
+        $stmt = $this->db->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 }

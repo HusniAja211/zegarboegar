@@ -22,9 +22,10 @@ class KategoriController
             exit;
         }
 
-        $allKategori = $this->kategoriModel->getAllKategori();
+        $allKategori = $this->kategoriModel->getKategoriWithCount(); // 🔁 diubah
         require __DIR__ . '/../views/kategori.php';
     }
+
 
     public function tambahKategori() {
         SessionManager::start();
@@ -218,7 +219,4 @@ class KategoriController
         }
         exit;
     }
-
-
-
 }

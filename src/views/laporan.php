@@ -21,7 +21,7 @@
   </div>
 
   <div class="bg-white rounded-lg shadow-lg p-6 border border-blue-200">
-    <h2 class="text-xl font-semibold text-blue-800 mb-4 text-center">📋 Detail Penjualan Produk</h2>
+    <h2 class="text-xl font-semibold text-blue-800 mb-4 text-center">📋 Total Penjualan Per Produk</h2>
     <div class="overflow-x-auto flex justify-center">
       <table class="min-w-full border border-gray-300 text-sm" id="tableLaporan">
         <thead class="bg-blue-100 text-blue-900">

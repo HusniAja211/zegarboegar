@@ -73,15 +73,23 @@ document.addEventListener("DOMContentLoaded", () => {
   btnCetakTable.addEventListener("click", () => {
     const tahun = tahunSelect.value;
     window.open(`/laporan/cetakTablePDF?tahun=${tahun}`, "_blank");
-  });
+  }); 
 
   btnCetakGrafik.addEventListener("click", async () => {
     const tahun = tahunSelect.value;
     const chartImage = chartInstance.toBase64Image();
 
+    // 🔹 Ambil ulang data langsung dari endpoint API
+    const res = await fetch(`/laporan/keuntungan?tahun=${tahun}`);
+    const data = await res.json();
+    const dataKeuntungan = data.data; // <- ini isi array dari backend
+    console.log("📊 Data dari chartInstance:", dataKeuntungan);
+
+
     const formData = new FormData();
     formData.append("tahun", tahun);
     formData.append("chartBase64", chartImage);
+    formData.append("dataKeuntungan", JSON.stringify(dataKeuntungan)); // 🔹 kirim ke PHP
 
     const response = await fetch("/laporan/cetakGrafikPDF", { method: "POST", body: formData });
     const blob = await response.blob();
@@ -94,6 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.URL.revokeObjectURL(url);
   });
+
 
   const defaultTahun = tahunSelect.value;
   loadKeuntungan(defaultTahun);

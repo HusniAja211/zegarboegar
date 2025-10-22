@@ -20,6 +20,7 @@ require_once __DIR__ . '/components/header.php';
                         <th class="px-4 py-3 border">No</th>
                         <th class="px-4 py-3 border">ID Kategori</th>
                         <th class="px-4 py-3 border">Nama Kategori</th>
+                        <th class="px-4 py-3 border">Jumlah Produk</th>
                         <th class="px-4 py-3 border">Aksi</th>
                     </tr>
                 </thead>
@@ -36,7 +37,8 @@ require_once __DIR__ . '/components/header.php';
                                 <td class="px-4 py-2 border text-center"><?= $index + 1 ?></td>
                                 <td class="px-4 py-2 border text-center"><?= $row['id_kategori'] ?></td>
                                 <td class="px-4 py-2 border font-semibold"><?= $row['nama_kategori'] ?></td>
-                                 <td class="px-4 py-2 border text-center space-x-3">
+                                <td class="px-4 py-2 border text-center"><?= $row['jumlah_produk'] ?></td> <!-- ✅ Tambahan -->
+                                <td class="px-4 py-2 border text-center space-x-3">
                                     <a href="/kategori/edit/<?= $row['id_kategori'] ?>" style="color: blue" class="hover:underline">Lihat</a>
                                     <button type="button"
                                         onclick="deleteKategoriAjax(<?= htmlspecialchars($row['id_kategori']) ?>)"
