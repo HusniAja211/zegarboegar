@@ -1,4 +1,6 @@
+// kategori.js
 async function deleteKategoriAjax(id) {
+  // Konfirmasi penghapusan
   const res = await Swal.fire({
     title: "Hapus kategori?",
     text: "Data kategori akan dihapus secara permanen.",
@@ -13,36 +15,94 @@ async function deleteKategoriAjax(id) {
   if (!res.isConfirmed) return;
 
   try {
+    // Kirim request hapus ke server
     const response = await fetch(`/kategori/delete/${id}`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json'
-      },
-      credentials: 'same-origin'
+      method: "POST",
+      headers: { "Accept": "application/json" },
+      credentials: "same-origin"
     });
 
-    // kalau server redirect ke login, response.ok bisa false atau status 302
+    // Jika server redirect (misalnya ke login)
     if (response.redirected) {
-      // arahkan browser
       window.location.href = response.url;
       return;
     }
 
-    if (!response.ok) {
-      // baca body (bisa berisi html redirect) -> tampilkan error
-      const text = await response.text();
-      throw new Error(text || 'Server error');
+    // Parse respons JSON
+    let result;
+    try {
+      result = await response.json();
+    } catch {
+      throw new Error("Respons server tidak valid.");
     }
 
-    // sukses → redirect ke daftar kategori dengan flag success
-    window.location.href = '/kategori?success=deleted';
+    // Tangani jika ada error dari server
+    if (!response.ok || result.error) {
+      let msg = "Terjadi kesalahan.";
+
+      switch (result.error) {
+        case "unauthorized":
+          msg = "Anda tidak memiliki izin. Silakan login kembali.";
+          break;
+        case "notfound":
+          msg = "Kategori tidak ditemukan.";
+          break;
+        case "kategori_in_use":
+          msg = "Kategori ini masih digunakan oleh produk dan tidak dapat dihapus.";
+          break;
+        case "delete_failed":
+          msg = "Gagal menghapus kategori. Silakan coba lagi.";
+          break;
+        default:
+          msg = result.message || msg;
+      }
+
+      await Swal.fire({
+        icon: "error",
+        title: "Gagal Menghapus",
+        text: msg
+      });
+
+      if (result.error === "unauthorized") {
+        window.location.href = "/login";
+      }
+
+      return;
+    }
+
+    // Jika sukses
+    await Swal.fire({
+      icon: "success",
+      title: "Berhasil",
+      text: "Kategori berhasil dihapus."
+    });
+
+    // Redirect dengan param unik agar tidak bentrok dengan member.js
+    window.location.href = "/kategori?success=kategori_deleted";
 
   } catch (err) {
+    console.error("Delete error:", err);
     Swal.fire({
-      icon: 'error',
-      title: 'Gagal menghapus',
-      text: 'Terjadi kesalahan saat menghapus kategori. Cek konsol/network.'
+      icon: "error",
+      title: "Kesalahan Server",
+      text: err.message || "Terjadi kesalahan tak terduga."
     });
-    console.error('Delete error:', err);
   }
 }
+
+// === Jalankan sekali saat halaman dimuat ===
+// Tampilkan notifikasi sukses setelah redirect
+document.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("success") === "kategori_deleted") {
+    Swal.fire({
+      icon: "success",
+      title: "Berhasil",
+      text: "Kategori telah dihapus.",
+      timer: 1500,
+      showConfirmButton: false
+    });
+    // Hapus parameter dari URL agar alert tidak muncul lagi saat refresh
+    window.history.replaceState({}, document.title, "/kategori");
+  }
+});

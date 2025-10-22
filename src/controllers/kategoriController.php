@@ -147,11 +147,12 @@ class KategoriController
     /**
      * Hapus kategori berdasarkan ID
      */
-    public function deleteKategori($id)
+   public function deleteKategori($id)
     {
         SessionManager::start();
         if (!SessionManager::isLoggedIn()) {
             if (strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false) {
+                header('Content-Type: application/json');
                 http_response_code(403);
                 echo json_encode(['error' => 'unauthorized']);
                 return;
@@ -169,6 +170,7 @@ class KategoriController
         $kategori = $this->kategoriModel->getKategoriById($id);
         if (!$kategori) {
             if (strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false) {
+                header('Content-Type: application/json');
                 http_response_code(404);
                 echo json_encode(['error' => 'notfound']);
                 return;
@@ -177,15 +179,37 @@ class KategoriController
             exit;
         }
 
+        // 🔍 Cek apakah masih digunakan oleh produk
+        require_once __DIR__ . '/../models/produkModels.php';
+        $produkModel = new Produk();
+        $count = $produkModel->countProdukByKategori($id);
+
+        if ($count > 0) {
+            if (strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false) {
+                header('Content-Type: application/json');
+                http_response_code(400);
+                echo json_encode([
+                    'error' => 'kategori_in_use',
+                    'message' => 'Kategori tidak dapat dihapus karena masih digunakan oleh produk.'
+                ]);
+                return;
+            }
+            header("Location: /kategori?error=kategori_in_use");
+            exit;
+        }
+
+        // ✅ Hapus jika tidak digunakan
         $deleted = $this->kategoriModel->deleteKategori($id);
         if ($deleted) {
             if (strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false) {
+                header('Content-Type: application/json');
                 echo json_encode(['success' => true]);
                 return;
             }
-            header("Location: /kategori?success=deleted");
+                header("Location: /kategori?success=kategori_deleted");
         } else {
             if (strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false) {
+                header('Content-Type: application/json');
                 http_response_code(500);
                 echo json_encode(['error' => 'delete_failed']);
                 return;
@@ -194,5 +218,7 @@ class KategoriController
         }
         exit;
     }
+
+
 
 }

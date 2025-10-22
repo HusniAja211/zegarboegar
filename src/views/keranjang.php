@@ -164,6 +164,7 @@ function formatRupiah($angka) {
         </div>
     </div>
 </main>
+
 <?php 
 require_once __DIR__ . '/components/footer.php';
 ?>

@@ -113,7 +113,7 @@ $submitColor = $isEdit ? 'bg-amber-600 hover:bg-amber-700 shadow-amber-400/40' :
                             <img 
                                 src="/barcode/<?= htmlspecialchars($produk['barcode']) ?>.png" 
                                 alt="Barcode <?= htmlspecialchars($produk['nama_produk']) ?>" 
-                                class="w-64 h-auto border border-gray-300 bg-white p-2 shadow-sm">
+                                class="w-64 h-auto bg-white p-2 shadow-sm">
                             <p class="text-xs text-gray-600 tracking-widest">
                                 <?= htmlspecialchars($produk['barcode']) ?>
                             </p>

@@ -20,6 +20,14 @@ class Produk
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function countProdukByKategori($id_kategori)
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM {$this->table} WHERE id_kategori = :id_kategori");
+        $stmt->execute(['id_kategori' => $id_kategori]);
+        return $stmt->fetchColumn();
+    }
+
+
     public function getProdukById($id)
     {
         $stmt = $this->db->prepare("SELECT id_produk, kode_produk, barcode, nama_produk, 

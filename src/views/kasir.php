@@ -9,7 +9,7 @@ require_once __DIR__ . '/components/header.php';
     <!-- Title -->
      <div class="flex flex-row justify-between">
       <h1 class="text-2xl font-bold text-black">Data Kasir</h1>
-      <h1 class="text-2xl font-bold text-black">Tambah Kasir</h1>
+      <!-- <h1 class="text-2xl font-bold text-black">Tambah Kasir</h1> -->
      </div>
     
 
@@ -55,7 +55,6 @@ require_once __DIR__ . '/components/header.php';
 
   </div>
 </main>
-
 <?php
 require_once __DIR__ . '/components/footer.php';
 ?>

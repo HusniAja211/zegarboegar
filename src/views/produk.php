@@ -41,5 +41,4 @@ $initialCategory = $kategoriList[0] ?? 'Semua Produk';
     </div>
 
 </main>
-
 <?php require_once __DIR__ . '/components/footer.php'; ?>
