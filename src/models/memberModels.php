@@ -34,7 +34,7 @@ class Member
             INSERT INTO {$this->table} 
                 (nama_member, no_hp, email, poin) 
             VALUES 
-                (:nama, :email, :telepon, :poin)
+                (:nama, :telepon, :email, :poin)
         ");
         return $stmt->execute([
             ':nama'     => $nama,

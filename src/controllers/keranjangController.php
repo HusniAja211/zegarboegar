@@ -221,7 +221,18 @@ class KeranjangController
         $produkModel = new Produk();
         $memberModel = new Member();
 
-        $id_kasir = $_SESSION['user']['id_kasir'] ?? 1;
+        // Pastikan kasir sudah login — ambil data via SessionManager
+        $kasirSession = \SessionManager::kasir();
+        if (!$kasirSession || !isset($kasirSession['id'])) {
+            http_response_code(400);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Kasir belum login atau ID kasir tidak tersedia di session.'
+            ]);
+            exit;
+        }
+
+        $id_kasir = $kasirSession['id'];
         $tanggal = date('Y-m-d H:i:s');
         $id_member = null;
 
